@@ -92,7 +92,7 @@ namespace NutriConect.Business.Token
                 expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
                 signingCredentials: new SigningCredentials(
                                                     this.securityKey,
-                                                    SecurityAlgorithms.Aes128CbcHmacSha256)
+                                                    SecurityAlgorithms.HmacSha256)
                 );
 
             return new TokenJWT(token);

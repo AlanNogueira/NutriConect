@@ -9,19 +9,21 @@ using System.Threading.Tasks;
 
 namespace NutriConect.Data.Mappings
 {
-    public class RecipeMapping : IEntityTypeConfiguration<Recipe>
+    public class ClientMapping : IEntityTypeConfiguration<Client>
     {
-        public void Configure(EntityTypeBuilder<Recipe> builder)
+        public void Configure(EntityTypeBuilder<Client> builder)
         {
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).IsRequired().HasColumnType("varchar(256)");
 
-            builder.Property(x => x.Text).IsRequired().HasColumnType("varchar(MAX)");
+            builder.Property(x => x.Phone).IsRequired().HasColumnType("varchar(256)");
 
-            builder.HasOne(x => x.User);
+            builder.Property(x => x.CreateDate).IsRequired().HasDefaultValue(DateTime.Now);
 
-            builder.ToTable("Recipes");
+            builder.HasOne(x => x.Address);
+
+            builder.ToTable("Clients");
         }
     }
 }

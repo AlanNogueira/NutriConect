@@ -22,6 +22,8 @@ namespace NutriConect.Controllers
             _signInManager = signInManager;
         }
 
+        [HttpPost("/api/CreateToken")]
+        [Produces("application/json")]
         public async Task<IActionResult> CreateToken([FromBody] LoginInputModel login)
         {
             if(!ModelState.IsValid) return Unauthorized();
@@ -31,17 +33,21 @@ namespace NutriConect.Controllers
             if (result.Succeeded)
             {
                 var token = new TokenJWTBuilder()
-                    .AddSecurityKey(JwtSecurityKey.Create("Secret_Key-12345678"))
+                    .AddSecurityKey(JwtSecurityKey.Create("43443FDFDF34DF34343fdf344SDFSDFSDFSDFSDF4545354345SDFGDFGDFGDFGdffgfdGDFGDGR%"))
                     .AddSubject("NutriConect")
                     .AddIssuer("NutriConect.Security.Bearer")
                     .AddAudience("NutriConect.Security.Bearer")
+                    .AddClaim("email", login.Email)
                     .AddExpiry(5)
                     .Builder();
 
-                return Ok(token.value);
+                var user = await _userManager.FindByEmailAsync(login.Email);
+                var role = await _userManager.GetRolesAsync(user);
+
+                return Ok(new { token = token.value, userName = user.UserName, role = role.FirstOrDefault() });
             }
             else
-                return Unauthorized();
+                return Unauthorized("Usuário ou senha incorretos.");
         }
     }
 }

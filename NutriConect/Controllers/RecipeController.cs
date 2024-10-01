@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NutriConect.Business.Entities;
@@ -29,12 +30,13 @@ namespace NutriConect.Controllers
 
         [HttpPost("/api/CreateRecipe")]
         [Produces("application/json")]
+        [Authorize]
         public async Task<IActionResult> CreateRecipe(CreateRecipeInputModel createRecipe)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            var userId = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var user = await _userManager.FindByIdAsync(userId);
+            var email = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+            var user = await _userManager.FindByEmailAsync(email);
             if(user is null)
                 return BadRequest("Usuário da postagem não encontrado.");
 
@@ -42,7 +44,7 @@ namespace NutriConect.Controllers
 
             _recipeService.Add(recipe);
 
-            return Ok(recipe);
+            return Ok("Receita criada com sucesso.");
         }
     }
 }

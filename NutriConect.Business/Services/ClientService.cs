@@ -24,6 +24,11 @@ namespace NutriConect.Business.Services
             return await _clientRepository.FindByIdTracked(Id);
         }
 
+        public async Task Add(Client client)
+        {
+            await _clientRepository.Add(client);
+        }
+
         public void Dispose()
         {
             _clientRepository?.Dispose();

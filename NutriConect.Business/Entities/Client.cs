@@ -9,5 +9,8 @@ namespace NutriConect.Business.Entities
     public class Client : BaseEntity
     {
         public string Name { get; set; }
+        public string Phone { get; set; }
+        public Address Address { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }
