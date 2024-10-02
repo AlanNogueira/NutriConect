@@ -12,5 +12,7 @@ namespace NutriConect.Business.Interfaces.Services
         Task<IEnumerable<Client>> ListAll();
         Task<Client?> FindByIdTracked(int Id);
         Task Add(Client client);
+        Task Update(Client client);
+        Task<Client?> GetClientByEmail(string email);
     }
 }

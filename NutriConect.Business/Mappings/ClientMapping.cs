@@ -1,5 +1,6 @@
 ﻿using NutriConect.Business.Entities;
 using NutriConect.Business.InputModels;
+using NutriConect.Business.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,45 @@ namespace NutriConect.Business.Mappings
                     UserName = createClient.Email,
                     Email = createClient.Email,
                     CPF = createClient.CPF
+                }
+            };
+        }
+
+        public static void UpdateClientToClient(UpdateClientInputModel updateClient, Client client)
+        {
+            client.Name = updateClient.Name;
+            client.Phone = updateClient.Phone;
+
+            client.Address.City = updateClient.Address.City;
+            client.Address.State = updateClient.Address.State;
+            client.Address.Neighborhood = updateClient.Address.Neighborhood;
+            client.Address.Street = updateClient.Address.Street;
+            client.Address.Number = updateClient.Address.Number;
+            client.Address.ZipCode = updateClient.Address.ZipCode;
+        }
+
+        public static ClientViewModel ClienteToViewModel(Client client)
+        {
+            return new ClientViewModel
+            {
+                Id = client.Id,
+                Name = client.Name,
+                Phone = client.Phone,
+                Address = new AddressViewModel
+                {
+                    Id = client.Address.Id,
+                    City = client.Address.City,
+                    State = client.Address.State,
+                    Neighborhood = client.Address.Neighborhood,
+                    Street = client.Address.Street,
+                    Number = client.Address.Number,
+                    ZipCode = client.Address.ZipCode
+                },
+                User = new UserViewModel
+                {
+                    Id = client.User.Id,
+                    Email = client.User.Email,
+                    CPF = client.User.CPF,
                 }
             };
         }

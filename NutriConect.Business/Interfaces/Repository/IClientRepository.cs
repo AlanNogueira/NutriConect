@@ -10,5 +10,6 @@ namespace NutriConect.Business.Interfaces.Repository
     public interface IClientRepository : IBaseRepository<Client>
     {
         Task<Client?> FindByIdTracked(int Id);
+        Task<Client?> GetClientByEmail(string email);
     }
 }

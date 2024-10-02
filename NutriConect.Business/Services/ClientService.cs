@@ -1,4 +1,5 @@
-﻿using NutriConect.Business.Entities;
+﻿using Microsoft.Identity.Client;
+using NutriConect.Business.Entities;
 using NutriConect.Business.Interfaces.Repository;
 using NutriConect.Business.Interfaces.Services;
 using System;
@@ -27,6 +28,16 @@ namespace NutriConect.Business.Services
         public async Task Add(Client client)
         {
             await _clientRepository.Add(client);
+        }
+
+        public async Task Update(Client client)
+        {
+            await _clientRepository.Update(client);
+        }
+
+        public async Task<Client?> GetClientByEmail(string email)
+        {
+            return await _clientRepository.GetClientByEmail(email);
         }
 
         public void Dispose()

@@ -19,5 +19,10 @@ namespace NutriConect.Data.Repository
         {
             return await Db.Clients.AsTracking().FirstOrDefaultAsync(x => x.Id == Id);
         }
+
+        public async Task<Client?> GetClientByEmail(string email)
+        {
+            return await Db.Clients.Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.User.Email == email);
+        }
     }
 }
