@@ -77,21 +77,6 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPost("/api/UpdatePassword")]
-        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordInputModel updatePassword)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var user = await _userManager.FindByEmailAsync(updatePassword.Email);
-            if (user == null) return BadRequest("Usuário não encontrado.");
-
-            var result = await _userManager.ChangePasswordAsync(user, updatePassword.CurrentPassword, updatePassword.NewPassword);
-            if (result.Errors.Any()) return BadRequest(result.Errors);
-
-            return Ok("Senha atualizada com sucesso.");
-        }
-
-        [Produces("application/json")]
         [HttpGet("/api/GetClientByEmail/{email}")]
         public async Task<IActionResult> GetClientByEmail([FromRoute] string email)
         {

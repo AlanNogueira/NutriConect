@@ -9,12 +9,12 @@ namespace NutriConect.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
 
-        public TokenController(
+        public AuthController(
             UserManager<ApplicationUser> userManager, 
             SignInManager<ApplicationUser> signInManager)
         {
@@ -48,6 +48,21 @@ namespace NutriConect.Controllers
             }
             else
                 return Unauthorized("Usuário ou senha incorretos.");
+        }
+
+        [Produces("application/json")]
+        [HttpPost("/api/UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordInputModel updatePassword)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(updatePassword.Email);
+            if (user == null) return BadRequest("Usuário não encontrado.");
+
+            var result = await _userManager.ChangePasswordAsync(user, updatePassword.CurrentPassword, updatePassword.NewPassword);
+            if (result.Errors.Any()) return BadRequest(result.Errors);
+
+            return Ok("Senha atualizada com sucesso.");
         }
     }
 }
