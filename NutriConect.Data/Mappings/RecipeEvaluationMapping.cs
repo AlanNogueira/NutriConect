@@ -9,23 +9,27 @@ using System.Threading.Tasks;
 
 namespace NutriConect.Data.Mappings
 {
-    public class RecipeMapping : IEntityTypeConfiguration<Recipe>
+    public class RecipeEvaluationMapping : IEntityTypeConfiguration<RecipeEvaluation>
     {
-        public void Configure(EntityTypeBuilder<Recipe> builder)
+        public void Configure(EntityTypeBuilder<RecipeEvaluation> builder)
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Name).IsRequired().HasColumnType("varchar(256)");
+            builder.Property(x => x.Title).IsRequired().HasColumnType("varchar(256)");
 
-            builder.Property(x => x.Text).IsRequired().HasColumnType("varchar(MAX)");
+            builder.Property(x => x.Text).IsRequired().HasColumnType("varchar(256)");
 
             builder.Property(x => x.CreateDate).HasDefaultValueSql("getdate()");
+
+            builder.Property(x => x.Value).HasColumnType("int");
+
+            builder.HasOne(x => x.Recipe);
 
             builder.HasOne(x => x.Client);
 
             builder.HasOne(x => x.Professional);
 
-            builder.ToTable("Recipes");
+            builder.ToTable("RecipeEvaluations");
         }
     }
 }

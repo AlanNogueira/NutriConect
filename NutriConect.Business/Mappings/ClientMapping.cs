@@ -32,7 +32,6 @@ namespace NutriConect.Business.Mappings
                 {
                     UserName = createClient.Email,
                     Email = createClient.Email,
-                    CPF = createClient.CPF
                 }
             };
         }
@@ -50,9 +49,9 @@ namespace NutriConect.Business.Mappings
             client.Address.ZipCode = updateClient.Address.ZipCode;
         }
 
-        public static ClientViewModel ClienteToViewModel(Client client)
+        public static ClientViewModel? ClienteToViewModel(Client? client)
         {
-            return new ClientViewModel
+            return client is null ? null : new ClientViewModel
             {
                 Id = client.Id,
                 Name = client.Name,
@@ -71,7 +70,6 @@ namespace NutriConect.Business.Mappings
                 {
                     Id = client.User.Id,
                     Email = client.User.Email,
-                    CPF = client.User.CPF,
                 }
             };
         }

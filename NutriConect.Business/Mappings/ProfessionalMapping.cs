@@ -31,7 +31,6 @@ namespace NutriConect.Business.Mappings
                 {
                     UserName = createProfessional.Email,
                     Email = createProfessional.Email,
-                    CPF = createProfessional.CPF
                 }
             };
         }
@@ -49,9 +48,9 @@ namespace NutriConect.Business.Mappings
             professional.Address.ZipCode = updateProfessional.Address.ZipCode;
         }
 
-        public static ProfessionalViewModel ProfessionalToViewModel(Professional professional)
+        public static ProfessionalViewModel? ProfessionalToViewModel(Professional? professional)
         {
-            return new ProfessionalViewModel
+            return professional is null ? null : new ProfessionalViewModel
             {
                 Id = professional.Id,
                 Name = professional.Name,
@@ -69,8 +68,7 @@ namespace NutriConect.Business.Mappings
                 User = new UserViewModel
                 {
                     Id = professional.User.Id,
-                    Email = professional.User.Email,
-                    CPF = professional.User.CPF,
+                    Email = professional.User.Email
                 }
             };
         }

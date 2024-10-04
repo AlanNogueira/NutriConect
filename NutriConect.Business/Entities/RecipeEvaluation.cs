@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace NutriConect.Business.Entities
 {
-    public class Recipe : BaseEntity
+    public class RecipeEvaluation : BaseEntity
     {
-        public string Name { get; set; }
+        public string Text { get; set; }
+        public string Title { get; set; }
+        public int Value { get; set; }
+        public Recipe Recipe { get; set; }
         public Client? Client { get; set; }
         public Professional? Professional { get; set; }
-        public string Text { get; set; }
     }
 }

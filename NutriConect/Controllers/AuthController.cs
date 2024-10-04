@@ -35,17 +35,18 @@ namespace NutriConect.Controllers
 
             if (result.Succeeded)
             {
+                var user = await _userManager.FindByEmailAsync(login.Email);
+                var role = await _userManager.GetRolesAsync(user);
+
                 var token = new TokenJWTBuilder()
                     .AddSecurityKey(JwtSecurityKey.Create("43443FDFDF34DF34343fdf344SDFSDFSDFSDFSDF4545354345SDFGDFGDFGDFGdffgfdGDFGDGR%"))
                     .AddSubject("NutriConect")
                     .AddIssuer("NutriConect.Security.Bearer")
                     .AddAudience("NutriConect.Security.Bearer")
                     .AddClaim("email", login.Email)
-                    .AddExpiry(5)
+                    .AddClaim("role", role.FirstOrDefault())
+                    .AddExpiry(600)
                     .Builder();
-
-                var user = await _userManager.FindByEmailAsync(login.Email);
-                var role = await _userManager.GetRolesAsync(user);
 
                 return Ok(new { token = token.value, userName = user.UserName, role = role.FirstOrDefault() });
             }

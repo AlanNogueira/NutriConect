@@ -9,6 +9,5 @@ namespace NutriConect.Business.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        public string CPF {  get; set; }
     }
 }
