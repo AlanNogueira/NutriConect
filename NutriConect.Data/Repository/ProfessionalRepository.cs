@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NutriConect.Business.Entities;
+using NutriConect.Business.InputModels.Filters;
 using NutriConect.Business.Interfaces.Repository;
+using NutriConect.Business.Pagination;
 using NutriConect.Data.Context;
 
 namespace NutriConect.Data.Repository
@@ -17,6 +20,17 @@ namespace NutriConect.Data.Repository
         public async Task<Professional?> GetProfessionalByEmail(string email)
         {
             return await Db.Professionals.Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.User.Email == email);
+        }
+
+        public async Task<PaginatedList<Professional>> GetProfessionals(ProfessionalFilters filters, int page = 1, int pageSize = 10)
+        {
+            return await PaginatedList<Professional>.CreateAsync(ProfessionalsFilters(filters), page, pageSize);
+        }
+
+        public IQueryable<Professional> ProfessionalsFilters(ProfessionalFilters filters)
+        {
+            return Db.Professionals.Include(x => x.Address).Where(x => !string.IsNullOrEmpty(filters.City) ? x.Address.City.ToUpper().Contains(filters.City.ToUpper()) : true)
+                                   .Where(x => !string.IsNullOrEmpty(filters.State) ? x.Address.State.ToUpper().Contains(filters.State.ToUpper()) : true);
         }
     }
 }

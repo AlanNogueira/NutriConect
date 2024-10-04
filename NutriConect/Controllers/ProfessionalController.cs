@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using NutriConect.Business.Entities;
 using NutriConect.Business.InputModels;
+using NutriConect.Business.InputModels.Filters;
 using NutriConect.Business.InputModels.Professional;
 using NutriConect.Business.Interfaces.Services;
 using NutriConect.Business.Mappings;
@@ -89,6 +90,14 @@ namespace NutriConect.Controllers
             var professionalViewModel = ProfessionalMapping.ProfessionalToViewModel(professional);
 
             return Ok(professionalViewModel);
+        }
+
+        [Produces("application/json")]
+        [HttpGet("/api/GetProfessionals")]
+        public async Task<IActionResult> GetProfessionals([FromQuery]ProfessionalFilters filters, int page = 1, int pageSize = 10)
+        {
+            var professionals = await _professionalService.GetProfessionals(filters, page, pageSize);
+            return Ok(professionals);
         }
     }
 }
