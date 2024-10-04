@@ -14,6 +14,8 @@ namespace NutriConect.Data.Context
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<RecipeEvaluation> RecipeEvaluations { get; set; }
+        public DbSet<Tip> Tips { get; set; }
+        public DbSet<TipEvaluation> TipEvaluations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

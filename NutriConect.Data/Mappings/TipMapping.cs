@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace NutriConect.Data.Mappings
 {
-    public class RecipeEvaluationMapping : IEntityTypeConfiguration<RecipeEvaluation>
+    public class TipMapping : IEntityTypeConfiguration<Tip>
     {
-        public void Configure(EntityTypeBuilder<RecipeEvaluation> builder)
+        public void Configure(EntityTypeBuilder<Tip> builder)
         {
             builder.HasKey(x => x.Id);
 
@@ -21,15 +21,11 @@ namespace NutriConect.Data.Mappings
 
             builder.Property(x => x.CreateDate).HasDefaultValueSql("getdate()");
 
-            builder.Property(x => x.Value).HasColumnType("int");
-
-            builder.HasOne(x => x.Recipe);
-
             builder.HasOne(x => x.Client);
 
             builder.HasOne(x => x.Professional);
 
-            builder.ToTable("RecipeEvaluations");
+            builder.ToTable("Tips");
         }
     }
 }
