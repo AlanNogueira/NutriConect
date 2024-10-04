@@ -12,6 +12,8 @@ namespace NutriConect.Business.Interfaces.Repository
     public interface IRecipeRepository : IBaseRepository<Recipe>
     {
         public Task<Recipe?> GetRecipeById(int id);
-        Task<PaginatedList<Recipe>> GetRecipes(RecipeFilters filters, int page, int pageSize);
+        Task<Recipe?> GetRecipeByIdTracked(int id);
+        Task<PaginatedList<Recipe>> GetRecipes(RecipeFilters filters, int page = 1, int pageSize = 10);
+        Task<PaginatedList<Recipe>> GetRecipesByUser(string email, int page = 1, int pageSize = 10);
     }
 }

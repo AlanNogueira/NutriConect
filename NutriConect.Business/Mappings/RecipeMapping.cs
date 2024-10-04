@@ -2,6 +2,7 @@
 using NutriConect.Business.InputModels;
 using NutriConect.Business.InputModels.Recipe;
 using NutriConect.Business.ViewModels;
+using NutriConect.Business.ViewModels.Recipe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,22 @@ namespace NutriConect.Business.Mappings
                 Client = client,
                 Professional = professional
             };
+        }
+
+        public static RecipeByUser RecipeToReciberByUserViewModel(Recipe recipe)
+        {
+            return new RecipeByUser
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                Text = recipe.Text
+            };
+        }
+
+        public static void UpdateRecipeToRecipe(UpdateRecipeInputMode updateRecipe, Recipe recipe)
+        {
+            recipe.Name = updateRecipe.Title;
+            recipe.Text = updateRecipe.Text;
         }
     }
 }

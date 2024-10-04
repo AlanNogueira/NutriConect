@@ -18,6 +18,16 @@ namespace NutriConect.Data.Repository
 
         public async Task<Recipe?> GetRecipeById(int id)
         {
+            return await Db.Recipes.AsNoTracking()
+                .Include(x => x.Client.Address)
+                .Include(x => x.Client.User)
+                .Include(x => x.Professional.Address)
+                .Include(x => x.Professional.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Recipe?> GetRecipeByIdTracked(int id)
+        {
             return await Db.Recipes
                 .Include(x => x.Client.Address)
                 .Include(x => x.Client.User)
@@ -29,6 +39,11 @@ namespace NutriConect.Data.Repository
         public async Task<PaginatedList<Recipe>> GetRecipes(RecipeFilters filters, int page, int pageSize)
         {
             return await PaginatedList<Recipe>.CreateAsync(RecipeFilters(filters), page, pageSize);
+        }
+
+        public async Task<PaginatedList<Recipe>> GetRecipesByUser(string email, int page = 1, int pageSize = 10)
+        {
+            return await PaginatedList<Recipe>.CreateAsync(Db.Recipes.Where(x => x.Client.User.Email == email || x.Professional.User.Email == email), page, pageSize);
         }
 
         public IQueryable<Recipe> RecipeFilters(RecipeFilters recipeFilters)

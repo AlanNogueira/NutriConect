@@ -11,6 +11,11 @@ namespace NutriConect.Business.Services
         private readonly IRecipeRepository _recipeRepository;
         private readonly IRecipeEvaluationRepository _recipeEvaluationRepository;
 
+        public void Dispose()
+        {
+            _recipeRepository?.Dispose();
+        }
+
         public RecipeService(IRecipeRepository recipeRepository, IRecipeEvaluationRepository recipeEvaluationRepository)
         {
             _recipeRepository = recipeRepository;
@@ -37,9 +42,19 @@ namespace NutriConect.Business.Services
             await _recipeEvaluationRepository.Add(recipeEvaluation);
         }
 
-        public void Dispose()
+        public async Task<PaginatedList<Recipe>> GetRecipesByUser(string email, int page = 1, int pageSize = 10)
         {
-            _recipeRepository?.Dispose();
+            return await _recipeRepository.GetRecipesByUser(email, page, pageSize);
+        }
+
+        public async Task<Recipe?> GetRecipeByIdTracked(int id)
+        {
+            return await _recipeRepository.GetRecipeByIdTracked(id);
+        }
+
+        public async Task UpdateRecipe(Recipe recipe)
+        {
+            await _recipeRepository.Update(recipe);
         }
     }
 }

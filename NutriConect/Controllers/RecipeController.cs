@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using NutriConect.Business.Entities;
 using NutriConect.Business.InputModels;
 using NutriConect.Business.InputModels.Recipe;
+using NutriConect.Business.InputModels.Tip;
 using NutriConect.Business.Interfaces.Services;
 using NutriConect.Business.Mappings;
+using NutriConect.Business.Services;
 using System.Security.Claims;
 
 namespace NutriConect.Controllers
@@ -108,6 +110,32 @@ namespace NutriConect.Controllers
             await _recipeService.CreateRecipeEvaluation(recipeEvaluation);
 
             return Ok("Receita avaliada com sucesso.");
+        }
+
+        [HttpGet("api/GetRecipeByUser")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetRecipesByUser(int page = 1, int pageSize = 10)
+        {
+            var email = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+
+            var recipes = await _recipeService.GetRecipesByUser(email, page, pageSize);
+
+            var viewModel = recipes.Select(x => RecipeMapping.RecipeToReciberByUserViewModel(x)).ToList();
+
+            return Ok(viewModel);
+        }
+
+        [HttpPut("/api/UpdateRecipe")]
+        [Produces("application/json")]
+        public async Task<IActionResult> UpdateRecipe([FromBody] UpdateRecipeInputMode updateRecipe)
+        {
+            var recipe = await _recipeService.GetRecipeByIdTracked(updateRecipe.Id);
+            if (recipe is null) return NotFound("Receita não encontrada.");
+
+            RecipeMapping.UpdateRecipeToRecipe(updateRecipe, recipe);
+            await _recipeService.UpdateRecipe(recipe);
+
+            return Ok(updateRecipe);
         }
     }
 }
