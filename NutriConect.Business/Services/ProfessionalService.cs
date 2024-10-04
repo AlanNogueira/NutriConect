@@ -33,9 +33,9 @@ namespace NutriConect.Business.Services
             await _professionalRepository.Update(professional);
         }
 
-        public async Task<Professional?> GetClientByEmail(string email)
+        public async Task<Professional?> GetProfessionalByEmail(string email)
         {
-            return await _professionalRepository.GetClientByEmail(email);
+            return await _professionalRepository.GetProfessionalByEmail(email);
         }
 
         public void Dispose()

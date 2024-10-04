@@ -13,6 +13,7 @@ namespace NutriConect.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ClientController : ControllerBase
     {
         private UserManager<ApplicationUser> _userManager;

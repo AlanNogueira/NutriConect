@@ -13,6 +13,6 @@ namespace NutriConect.Business.Interfaces.Services
         Task<Professional?> FindByIdTracked(int id);
         Task Add(Professional professional);
         Task Update(Professional professional);
-        Task<Professional?> GetClientByEmail(string email);
+        Task<Professional?> GetProfessionalByEmail(string email);
     }
 }

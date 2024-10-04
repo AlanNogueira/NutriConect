@@ -10,6 +10,6 @@ namespace NutriConect.Business.Interfaces.Repository
     public interface IProfessionalRepository : IBaseRepository<Professional>
     {
         Task<Professional?> FindByIdTracked(int Id);
-        Task<Professional?> GetClientByEmail(string Email);
+        Task<Professional?> GetProfessionalByEmail(string Email);
     }
 }

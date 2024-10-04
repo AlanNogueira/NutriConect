@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NutriConect.Business.Entities;
@@ -9,6 +10,7 @@ namespace NutriConect.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private UserManager<ApplicationUser> _userManager;
@@ -24,6 +26,7 @@ namespace NutriConect.Controllers
 
         [HttpPost("/api/CreateToken")]
         [Produces("application/json")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateToken([FromBody] LoginInputModel login)
         {
             if(!ModelState.IsValid) return Unauthorized();

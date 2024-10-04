@@ -11,10 +11,10 @@ namespace NutriConect.Data.Repository
 
         public async Task<Professional?> FindByIdTracked(int Id)
         {
-            return await Db.Professionals.AsTracking().FirstOrDefaultAsync(x => x.Id == Id);
+            return await Db.Professionals.AsTracking().Include(x => x.Address).FirstOrDefaultAsync(x => x.Id == Id);
         }
 
-        public async Task<Professional?> GetClientByEmail(string email)
+        public async Task<Professional?> GetProfessionalByEmail(string email)
         {
             return await Db.Professionals.Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.User.Email == email);
         }

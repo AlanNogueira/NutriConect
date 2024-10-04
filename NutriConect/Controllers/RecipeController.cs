@@ -12,6 +12,7 @@ namespace NutriConect.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RecipeController : ControllerBase
     {
         private readonly IRecipeService _recipeService;
@@ -30,7 +31,6 @@ namespace NutriConect.Controllers
 
         [HttpPost("/api/CreateRecipe")]
         [Produces("application/json")]
-        [Authorize]
         public async Task<IActionResult> CreateRecipe(CreateRecipeInputModel createRecipe)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);

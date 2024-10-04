@@ -17,7 +17,7 @@ namespace NutriConect.Data.Repository
 
         public async Task<Client?> FindByIdTracked(int Id)
         {
-            return await Db.Clients.AsTracking().FirstOrDefaultAsync(x => x.Id == Id);
+            return await Db.Clients.AsTracking().Include(x => x.Address).FirstOrDefaultAsync(x => x.Id == Id);
         }
 
         public async Task<Client?> GetClientByEmail(string email)
