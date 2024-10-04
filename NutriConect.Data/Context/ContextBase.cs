@@ -10,6 +10,7 @@ namespace NutriConect.Data.Context
         public ContextBase(DbContextOptions<ContextBase> options) : base(options) { }
 
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Professional> Professionals { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Address> Addresses { get; set; }
 

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace NutriConect.Data.Mappings
 {
-    public class ClientMapping : IEntityTypeConfiguration<Client>
+    public class ProfessionalMapping : IEntityTypeConfiguration<Professional>
     {
-        public void Configure(EntityTypeBuilder<Client> builder)
+        public void Configure(EntityTypeBuilder<Professional> builder)
         {
             builder.HasKey(x => x.Id);
 
@@ -23,7 +23,7 @@ namespace NutriConect.Data.Mappings
 
             builder.HasOne(x => x.Address);
 
-            builder.ToTable("Clients");
+            builder.ToTable("Professionals");
         }
     }
 }

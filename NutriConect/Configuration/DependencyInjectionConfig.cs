@@ -18,6 +18,9 @@ namespace NutriConect.Configuration
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IRecipeRepository, RecipeRepository>();
 
+            services.AddScoped<IProfessionalService, ProfessionalService>();
+            services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
+
             return services;
         }
     }

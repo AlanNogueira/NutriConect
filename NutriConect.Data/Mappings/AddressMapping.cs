@@ -27,7 +27,7 @@ namespace NutriConect.Data.Mappings
 
             builder.Property(x => x.Number).IsRequired().HasColumnType("varchar(256)");
 
-            builder.Property(x => x.CreateDate).IsRequired().HasDefaultValue(DateTime.Now);
+            builder.Property(x => x.CreateDate).HasDefaultValueSql("getdate()");
 
             builder.ToTable("Addresses");
         }

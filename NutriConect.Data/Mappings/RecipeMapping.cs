@@ -19,6 +19,8 @@ namespace NutriConect.Data.Mappings
 
             builder.Property(x => x.Text).IsRequired().HasColumnType("varchar(MAX)");
 
+            builder.Property(x => x.CreateDate).HasDefaultValueSql("getdate()");
+
             builder.HasOne(x => x.User);
 
             builder.ToTable("Recipes");
