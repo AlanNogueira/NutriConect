@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NutriConect.Business.Entities;
 using NutriConect.Business.InputModels;
 using NutriConect.Business.Token;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace NutriConect.Controllers
 {
@@ -67,6 +68,28 @@ namespace NutriConect.Controllers
             if (result.Errors.Any()) return BadRequest(result.Errors);
 
             return Ok("Senha atualizada com sucesso.");
+        }
+
+        [HttpPost("ValidateToken")]
+        public async Task<ActionResult> ValidateToken()
+        {
+            var headers = Request.Headers.Authorization;
+            var authorization = headers.FirstOrDefault();
+            if (authorization is null)
+            {
+                return BadRequest("Token não informado");
+            }
+
+            var tokenString = authorization.Split(" ")[1];
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadToken(tokenString) as JwtSecurityToken;
+
+            var dataExpiracao = token.ValidTo;
+            if (dataExpiracao < DateTime.UtcNow)
+                return Unauthorized("Token expirado.");
+            else
+                return Ok("Token ainda é válido.");
         }
     }
 }
