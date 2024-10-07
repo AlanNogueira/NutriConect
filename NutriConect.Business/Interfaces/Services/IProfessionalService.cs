@@ -17,5 +17,7 @@ namespace NutriConect.Business.Interfaces.Services
         Task Update(Professional professional);
         Task<Professional?> GetProfessionalByEmail(string email);
         Task<PaginatedList<Professional>> GetProfessionals(ProfessionalFilters filters, int page = 1, int pageSize = 10);
+        Task CreateProfessionalEvaluation(ProfessionalEvaluation professionalEvaluation);
+        Task<Professional?> GetProfessionalByIdNoTracking(int professionalId);
     }
 }

@@ -13,6 +13,7 @@ namespace NutriConect.Business.Interfaces.Repository
     {
         Task<Professional?> FindByIdTracked(int Id);
         Task<Professional?> GetProfessionalByEmail(string Email);
+        Task<Professional?> GetProfessionalByIdNoTracking(int professionalId);
         Task<PaginatedList<Professional>> GetProfessionals(ProfessionalFilters filters, int page = 1, int pageSize = 10);
     }
 }

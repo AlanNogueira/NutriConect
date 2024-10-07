@@ -18,13 +18,17 @@ namespace NutriConect.Configuration
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IRecipeRepository, RecipeRepository>();
 
+            services.AddScoped<IRecipeEvaluationRepository, RecipeEvaluationRepository>();
+
             services.AddScoped<IProfessionalService, ProfessionalService>();
             services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
 
-            services.AddScoped<IRecipeEvaluationRepository, RecipeEvaluationRepository>();
+            services.AddScoped<IProfessionalEvaluationRepository, ProfessionalEvaluationRepository>();
 
             services.AddScoped<ITipService, TipService>();
             services.AddScoped<ITipRepository, TipRepository>();
+
+            services.AddScoped<ITipEvaluationRepository, TipEvaluationRepository>();
 
             return services;
         }

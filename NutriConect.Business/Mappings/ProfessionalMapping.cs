@@ -72,5 +72,17 @@ namespace NutriConect.Business.Mappings
                 }
             };
         }
+
+        public static ProfessionalEvaluation CreateProfessionalEvaluationToProfessional(CreateProfessionalEvaluationInputModel tipEvaluationInputModel, Client client, Professional professional)
+        {
+            return new ProfessionalEvaluation
+            {
+                Title = tipEvaluationInputModel.Title,
+                Text = tipEvaluationInputModel.Text,
+                Value = tipEvaluationInputModel.Value,
+                Professional = professional,
+                Client = client
+            };
+        }
     }
 }

@@ -9,10 +9,17 @@ namespace NutriConect.Business.Services
     public class ProfessionalService : IProfessionalService
     {
         private readonly IProfessionalRepository _professionalRepository;
+        private readonly IProfessionalEvaluationRepository _professionalEvaluationRepository;
 
-        public ProfessionalService(IProfessionalRepository professionalRepository)
+        public ProfessionalService(IProfessionalRepository professionalRepository, IProfessionalEvaluationRepository professionalEvaluationRepository)
         {
             _professionalRepository = professionalRepository;
+            _professionalEvaluationRepository = professionalEvaluationRepository;
+        }
+
+        public void Dispose()
+        {
+            _professionalRepository?.Dispose();
         }
 
         public async Task<IEnumerable<Professional>> ListAll()
@@ -45,9 +52,14 @@ namespace NutriConect.Business.Services
             return await _professionalRepository.GetProfessionals(filters, page, pageSize);
         }
 
-        public void Dispose()
+        public async Task CreateProfessionalEvaluation(ProfessionalEvaluation professionalEvaluation)
         {
-            _professionalRepository?.Dispose();
+            await _professionalEvaluationRepository.Add(professionalEvaluation);
+        }
+
+        public async Task<Professional?> GetProfessionalByIdNoTracking(int professionalId)
+        {
+            return await _professionalRepository.GetProfessionalByIdNoTracking(professionalId);
         }
     }
 }

@@ -12,6 +12,11 @@ namespace NutriConect.Data.Repository
     {
         public ProfessionalRepository(ContextBase db) : base (db) {  }
 
+        public Task CreateProfessionalEvaluation(ProfessionalEvaluation professionalEvaluation)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Professional?> FindByIdTracked(int Id)
         {
             return await Db.Professionals.AsTracking().Include(x => x.Address).FirstOrDefaultAsync(x => x.Id == Id);
@@ -20,6 +25,11 @@ namespace NutriConect.Data.Repository
         public async Task<Professional?> GetProfessionalByEmail(string email)
         {
             return await Db.Professionals.Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.User.Email == email);
+        }
+
+        public async Task<Professional?> GetProfessionalByIdNoTracking(int professionalId)
+        {
+            return await Db.Professionals.AsNoTracking().Include(x => x.User).Include(x => x.Address).FirstOrDefaultAsync(x => x.Id == professionalId);
         }
 
         public async Task<PaginatedList<Professional>> GetProfessionals(ProfessionalFilters filters, int page = 1, int pageSize = 10)

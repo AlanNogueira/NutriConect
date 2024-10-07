@@ -7,9 +7,11 @@ using NutriConect.Business.Entities;
 using NutriConect.Business.InputModels;
 using NutriConect.Business.InputModels.Filters;
 using NutriConect.Business.InputModels.Professional;
+using NutriConect.Business.InputModels.Tip;
 using NutriConect.Business.Interfaces.Services;
 using NutriConect.Business.Mappings;
 using NutriConect.Business.Services;
+using System.Security.Claims;
 using System.Text;
 
 namespace NutriConect.Controllers
@@ -22,15 +24,21 @@ namespace NutriConect.Controllers
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
         private readonly IProfessionalService _professionalService;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IClientService _clientService;
 
         public ProfessionalController(
-            UserManager<ApplicationUser> userManager, 
-            SignInManager<ApplicationUser> signInManager, 
-            IProfessionalService professionalService)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IProfessionalService professionalService,
+            IHttpContextAccessor contextAccessor,
+            IClientService clientService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _professionalService = professionalService;
+            _contextAccessor = contextAccessor;
+            _clientService = clientService;
         }
 
         [AllowAnonymous]
@@ -98,6 +106,28 @@ namespace NutriConect.Controllers
         {
             var professionals = await _professionalService.GetProfessionals(filters, page, pageSize);
             return Ok(professionals);
+        }
+
+        [Produces("application/json")]
+        [HttpPost("/api/CreateProfessionalEvaluation")]
+        [Authorize(Roles = "Client")]
+        public async Task<IActionResult> CreateProfessionalEvaluation([FromBody]CreateProfessionalEvaluationInputModel createProfessionalEvaluation)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var professional = await _professionalService.GetProfessionalByIdNoTracking(createProfessionalEvaluation.ProfessionalId);
+            if (professional is null) return NotFound("O profissional informado não existe.");
+
+            var email = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+
+            Client client = await _clientService.GetClientByEmail(email);
+            if (client == null) return NotFound("Cliente não encontrado.");
+
+            var professionalEvaluation = ProfessionalMapping.CreateProfessionalEvaluationToProfessional(createProfessionalEvaluation, client, professional);
+
+            await _professionalService.CreateProfessionalEvaluation(professionalEvaluation);
+
+            return Ok("Receita avaliada com sucesso.");
         }
     }
 }
