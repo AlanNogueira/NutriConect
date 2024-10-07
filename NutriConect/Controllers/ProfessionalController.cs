@@ -105,7 +105,10 @@ namespace NutriConect.Controllers
         public async Task<IActionResult> GetProfessionals([FromQuery]ProfessionalFilters filters, int page = 1, int pageSize = 10)
         {
             var professionals = await _professionalService.GetProfessionals(filters, page, pageSize);
-            return Ok(professionals);
+
+            var professionalViewModel = professionals.Select(x => ProfessionalMapping.ProfessionalToViewModel(x));
+
+            return Ok(professionalViewModel);
         }
 
         [Produces("application/json")]
@@ -127,7 +130,7 @@ namespace NutriConect.Controllers
 
             await _professionalService.CreateProfessionalEvaluation(professionalEvaluation);
 
-            return Ok("Receita avaliada com sucesso.");
+            return Ok("Profissional avaliado com sucesso.");
         }
     }
 }

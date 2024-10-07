@@ -39,7 +39,7 @@ namespace NutriConect.Data.Repository
 
         public IQueryable<Professional> ProfessionalsFilters(ProfessionalFilters filters)
         {
-            return Db.Professionals.Include(x => x.Address).Where(x => !string.IsNullOrEmpty(filters.City) ? x.Address.City.ToUpper().Contains(filters.City.ToUpper()) : true)
+            return Db.Professionals.Include(x => x.Address).Include(x => x.User).Include(x => x.ProfessionalEvaluations).Where(x => !string.IsNullOrEmpty(filters.City) ? x.Address.City.ToUpper().Contains(filters.City.ToUpper()) : true)
                                    .Where(x => !string.IsNullOrEmpty(filters.State) ? x.Address.State.ToUpper().Contains(filters.State.ToUpper()) : true);
         }
     }

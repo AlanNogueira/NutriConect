@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NutriConect.Business.Entities
+namespace NutriConect.Business.ViewModels.Professional
 {
-    public class ProfessionalEvaluation : BaseEntity
+    public class ProfessionalEvaluationViewModel
     {
         public string Text { get; set; }
         public string Title { get; set; }

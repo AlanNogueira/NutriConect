@@ -12,5 +12,6 @@ namespace NutriConect.Business.Entities
         public string Phone { get; set; }
         public Address Address { get; set; }
         public ApplicationUser User { get; set; }
+        public List<ProfessionalEvaluation> ProfessionalEvaluations { get; set; }
     }
 }

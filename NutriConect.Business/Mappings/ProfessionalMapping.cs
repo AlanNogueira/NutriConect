@@ -1,6 +1,7 @@
 ﻿using NutriConect.Business.Entities;
 using NutriConect.Business.InputModels.Professional;
 using NutriConect.Business.ViewModels;
+using NutriConect.Business.ViewModels.Professional;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,15 @@ namespace NutriConect.Business.Mappings
                 Id = professional.Id,
                 Name = professional.Name,
                 Phone = professional.Phone,
+                AverageEvaluation = professional.ProfessionalEvaluations.Any() ? (professional.ProfessionalEvaluations.Sum(x => x.Value) / professional.ProfessionalEvaluations.Count()) : 0,
+                Evaluations = professional.ProfessionalEvaluations.Select(x => new ProfessionalEvaluationViewModel
+                {
+                    Title = x.Title,
+                    Text = x.Text,
+                    Value = x.Value,
+                    ClientId = x.ClientId,
+                    ProfessionalId = x.ProfessionalId
+                }).ToList(),
                 Address = new AddressViewModel
                 {
                     Id = professional.Address.Id,
@@ -80,8 +90,8 @@ namespace NutriConect.Business.Mappings
                 Title = tipEvaluationInputModel.Title,
                 Text = tipEvaluationInputModel.Text,
                 Value = tipEvaluationInputModel.Value,
-                Professional = professional,
-                Client = client
+                ProfessionalId = professional.Id,
+                ClientId = client.Id
             };
         }
     }

@@ -23,6 +23,8 @@ namespace NutriConect.Data.Mappings
 
             builder.HasOne(x => x.Address);
 
+            builder.HasMany(x => x.ProfessionalEvaluations);
+
             builder.ToTable("Professionals");
         }
     }

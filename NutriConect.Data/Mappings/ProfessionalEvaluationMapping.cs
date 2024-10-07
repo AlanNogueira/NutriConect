@@ -23,9 +23,9 @@ namespace NutriConect.Data.Mappings
 
             builder.Property(x => x.Value).HasColumnType("int");
 
-            builder.HasOne(x => x.Client);
+            builder.Property(x => x.ClientId).HasColumnType("int");
 
-            builder.HasOne(x => x.Professional);
+            builder.Property(x => x.ProfessionalId).HasColumnType("int");
 
             builder.ToTable("ProfessionalEvaluations");
         }
