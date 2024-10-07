@@ -32,7 +32,7 @@ namespace NutriConect.Controllers
 
         [AllowAnonymous]
         [Produces("application/json")]
-        [HttpPost("/api/CreateClientUser")]
+        [HttpPost("CreateClientUser")]
         public async Task<IActionResult> CreateClientUser([FromBody] CreateClientUserInputModel createClient)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
@@ -63,7 +63,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPut("/api/UpdateClient")]
+        [HttpPut("UpdateClient")]
         public async Task<IActionResult> UpdateClient([FromBody] UpdateClientInputModel updateClient)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
@@ -78,7 +78,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("/api/GetClientByEmail/{email}")]
+        [HttpGet("GetClientByEmail/{email}")]
         public async Task<IActionResult> GetClientByEmail([FromRoute] string email)
         {
             var client = await _clientService.GetClientByEmail(email);

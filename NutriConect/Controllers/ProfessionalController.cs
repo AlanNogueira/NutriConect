@@ -43,7 +43,7 @@ namespace NutriConect.Controllers
 
         [AllowAnonymous]
         [Produces("application/json")]
-        [HttpPost("/api/CreateProfessionalUser")]
+        [HttpPost("CreateProfessionalUser")]
         public async Task<IActionResult> CreateProfessionalUser([FromBody] CreateProfessionalInputModel createProfessional)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -74,7 +74,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPut("/api/UpdateProfessional")]
+        [HttpPut("UpdateProfessional")]
         public async Task<IActionResult> UpdateProfessional([FromBody] UpdateProfessionalInputModel updateProfessional)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -89,7 +89,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("/api/GetProfessionalByEmail/{email}")]
+        [HttpGet("GetProfessionalByEmail/{email}")]
         public async Task<IActionResult> GetProfessionalByEmail([FromRoute] string email)
         {
             var professional = await _professionalService.GetProfessionalByEmail(email);
@@ -101,7 +101,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("/api/GetProfessionals")]
+        [HttpGet("GetProfessionals")]
         public async Task<IActionResult> GetProfessionals([FromQuery]ProfessionalFilters filters, int page = 1, int pageSize = 10)
         {
             var professionals = await _professionalService.GetProfessionals(filters, page, pageSize);
@@ -112,7 +112,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPost("/api/CreateProfessionalEvaluation")]
+        [HttpPost("CreateProfessionalEvaluation")]
         [Authorize(Roles = "Client")]
         public async Task<IActionResult> CreateProfessionalEvaluation([FromBody]CreateProfessionalEvaluationInputModel createProfessionalEvaluation)
         {

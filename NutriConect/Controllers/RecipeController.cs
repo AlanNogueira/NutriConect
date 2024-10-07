@@ -38,7 +38,7 @@ namespace NutriConect.Controllers
             _professionalService = professionalService;
         }
 
-        [HttpPost("/api/CreateRecipe")]
+        [HttpPost("CreateRecipe")]
         [Produces("application/json")]
         public async Task<IActionResult> CreateRecipe(CreateRecipeInputModel createRecipe)
         {
@@ -62,7 +62,7 @@ namespace NutriConect.Controllers
             return Ok("Receita criada com sucesso.");
         }
 
-        [HttpGet("/api/GetRecipeById/{id}")]
+        [HttpGet("GetRecipeById/{id}")]
         [Produces("application/json")]
         public async Task<IActionResult> GetRecipeById(int id)
         {
@@ -74,7 +74,7 @@ namespace NutriConect.Controllers
             return Ok(recipeViewModel);
         }
 
-        [HttpGet("/api/GetRecipes")]
+        [HttpGet("GetRecipes")]
         [Produces("application/json")]
         public async Task<IActionResult> GetRecipes([FromQuery]RecipeFilters filters, int page = 1, int pageSize = 10)
         {
@@ -85,7 +85,7 @@ namespace NutriConect.Controllers
             return Ok(recipesViewModel);
         }
 
-        [HttpPost("api/CreateRecipeEvaluation")]
+        [HttpPost("CreateRecipeEvaluation")]
         [Produces("application/json")]
         public async Task<IActionResult> CreateRecipeEvaluation([FromBody] RecipeEvaluationsInputModel createRecipeEvaluations)
         {
@@ -112,7 +112,7 @@ namespace NutriConect.Controllers
             return Ok("Receita avaliada com sucesso.");
         }
 
-        [HttpGet("api/GetRecipeByUser")]
+        [HttpGet("GetRecipeByUser")]
         [Produces("application/json")]
         public async Task<IActionResult> GetRecipesByUser(int page = 1, int pageSize = 10)
         {
@@ -125,7 +125,7 @@ namespace NutriConect.Controllers
             return Ok(viewModel);
         }
 
-        [HttpPut("/api/UpdateRecipe")]
+        [HttpPut("UpdateRecipe")]
         [Produces("application/json")]
         public async Task<IActionResult> UpdateRecipe([FromBody] UpdateRecipeInputMode updateRecipe)
         {

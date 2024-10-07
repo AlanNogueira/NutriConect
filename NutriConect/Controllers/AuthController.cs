@@ -25,7 +25,7 @@ namespace NutriConect.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost("/api/CreateToken")]
+        [HttpPost("CreateToken")]
         [Produces("application/json")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateToken([FromBody] LoginInputModel login)
@@ -56,7 +56,7 @@ namespace NutriConect.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPost("/api/UpdatePassword")]
+        [HttpPost("UpdatePassword")]
         public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordInputModel updatePassword)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -70,6 +70,7 @@ namespace NutriConect.Controllers
             return Ok("Senha atualizada com sucesso.");
         }
 
+        [Produces("application/json")]
         [HttpPost("ValidateToken")]
         public async Task<ActionResult> ValidateToken()
         {

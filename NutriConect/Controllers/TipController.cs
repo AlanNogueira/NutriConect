@@ -33,7 +33,7 @@ namespace NutriConect.Api.Controllers
             _clientService = clientService;
         }
 
-        [HttpPost("/api/CreateTip")]
+        [HttpPost("CreateTip")]
         [Produces("application/json")]
         public async Task<IActionResult> CreateTip([FromBody] CreateTipInputModel tip)
         {
@@ -57,7 +57,7 @@ namespace NutriConect.Api.Controllers
             return Ok("Dica criada com sucesso.");
         }
 
-        [HttpGet("/api/GetTips")]
+        [HttpGet("GetTips")]
         [Produces("application/json")]
         public async Task<IActionResult> GetTips([FromQuery]TipFilters filters, int page = 1, int pageSize = 10)
         {
@@ -68,7 +68,7 @@ namespace NutriConect.Api.Controllers
             return Ok(tipsViewModels);
         }
 
-        [HttpGet("/api/GetTipById/{id}")]
+        [HttpGet("GetTipById/{id}")]
         [Produces("application/json")]
         public async Task<IActionResult> GetTipById(int id)
         {
@@ -80,7 +80,7 @@ namespace NutriConect.Api.Controllers
             return Ok(tip);
         }
 
-        [HttpPost("api/CreateTipEvaluation")]
+        [HttpPost("CreateTipEvaluation")]
         [Produces("application/json")]
         public async Task<IActionResult> CreateTipEvaluation([FromBody] TipEvaluationInputModel tipEvaluationInputModel)
         {
@@ -107,7 +107,7 @@ namespace NutriConect.Api.Controllers
             return Ok("Receita avaliada com sucesso.");
         }
 
-        [HttpGet("/api/GetTipsByUser")]
+        [HttpGet("GetTipsByUser")]
         [Produces("application/json")]
         public async Task<IActionResult> GetTipsByUser(int page = 1, int pageSize = 10)
         {
@@ -120,7 +120,7 @@ namespace NutriConect.Api.Controllers
             return Ok(viewModel);
         }
 
-        [HttpPut("/api/UpdateTip")]
+        [HttpPut("UpdateTip")]
         [Produces("application/json")]
         public async Task<IActionResult> UpdateTip([FromBody] UpdateTipInputMode updateTip)
         {
