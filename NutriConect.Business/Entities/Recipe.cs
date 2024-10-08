@@ -12,5 +12,6 @@ namespace NutriConect.Business.Entities
         public Client? Client { get; set; }
         public Professional? Professional { get; set; }
         public string Text { get; set; }
+        public List<RecipeEvaluation> Evaluations { get; set; }
     }
 }

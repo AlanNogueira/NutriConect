@@ -25,6 +25,8 @@ namespace NutriConect.Data.Mappings
 
             builder.HasOne(x => x.Professional);
 
+            builder.HasMany(x => x.Evaluations);
+
             builder.ToTable("Recipes");
         }
     }
