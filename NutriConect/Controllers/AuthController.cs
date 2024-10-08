@@ -72,25 +72,32 @@ namespace NutriConect.Controllers
 
         [Produces("application/json")]
         [HttpPost("ValidateToken")]
+        [AllowAnonymous]
         public async Task<ActionResult> ValidateToken()
         {
-            var headers = Request.Headers.Authorization;
-            var authorization = headers.FirstOrDefault();
-            if (authorization is null)
+            try
             {
-                return BadRequest("Token não informado");
+                var headers = Request.Headers.Authorization;
+                var authorization = headers.FirstOrDefault();
+                if (string.IsNullOrEmpty(authorization))
+                    return Ok(false);
+
+                var tokenString = authorization.Split(" ")[1];
+
+                var handler = new JwtSecurityTokenHandler();
+                var token = handler.ReadToken(tokenString) as JwtSecurityToken;
+
+                var dataExpiracao = token.ValidTo;
+                if (dataExpiracao < DateTime.UtcNow)
+                    return Ok(false);
+                else
+                    return Ok(true);
             }
+            catch (Exception ex)
+            {
 
-            var tokenString = authorization.Split(" ")[1];
-
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadToken(tokenString) as JwtSecurityToken;
-
-            var dataExpiracao = token.ValidTo;
-            if (dataExpiracao < DateTime.UtcNow)
-                return Unauthorized("Token expirado.");
-            else
-                return Ok("Token ainda é válido.");
+                return Ok(false);
+            }
         }
     }
 }
