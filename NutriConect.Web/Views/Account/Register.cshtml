@@ -1,0 +1,217 @@
+@model NutriConect.Business.InputModels.RegisterInputModel
+@using NutriConect.Business.Enums
+@{
+    ViewData["Title"] = "Criar conta";
+    Layout = "_NcPublicLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/components/forms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/auth.css" asp-append-version="true" />
+}
+
+    <div class="auth">
+        <aside class="auth__brand">
+            <a class="auth__logo" href="/" style="text-decoration:none; color:inherit;">
+                <span class="mark">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                </span>
+                NutriConect
+            </a>
+            <div class="auth__pitch">
+                <h2>Comece sua jornada por uma alimentação melhor.</h2>
+                <p>Conecte-se a nutricionistas verificados, descubra receitas pelos ingredientes que você tem e
+                    acompanhe seus objetivos — tudo em um só lugar.</p>
+                </div>
+                <div class="auth__quote">
+                </div>
+            </aside>
+
+            <main class="auth__panel">
+                <div class="auth__card">
+                    <h1>Criar conta</h1>
+                    <p class="lead">Leva menos de um minuto. Escolha como você quer usar a plataforma.</p>
+
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(string.Empty))
+                    {
+                        <div class="nc-alert nc-alert--danger" style="margin-bottom: 1.25rem;" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" x2="12" y1="8" y2="12" />
+                                <line x1="12" x2="12.01" y1="16" y2="16" />
+                            </svg>
+                            <div>
+                                @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                                {
+                                    <span>@error.ErrorMessage</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <form asp-action="Register" asp-controller="Account" method="post" class="auth__form">
+                        @Html.AntiForgeryToken()
+
+                        <div class="nc-field">
+                            <label class="nc-label">Sou</label>
+                            <div class="segment" role="radiogroup">
+                                <input type="radio" name="Role" id="role-cliente" value="@((int)UserRoleEnum.Cliente)"
+                                @(Model == null || Model.Role == UserRoleEnum.Cliente ? "checked" : "") />
+                                <label for="role-cliente">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <circle cx="12" cy="8" r="5" />
+                                        <path d="M20 21a8 8 0 1 0-16 0" />
+                                    </svg>
+                                    Cliente
+                                </label>
+                                <input type="radio" name="Role" id="role-pro" value="@((int)UserRoleEnum.Profissional)"
+                                @(Model?.Role == UserRoleEnum.Profissional ? "checked" : "") />
+                                <label for="role-pro">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path
+                                        d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                                    </svg>
+                                    Profissional
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="FullName">Nome completo</label>
+                            <input
+                            class="nc-input @(ViewData.ModelState["FullName"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                            asp-for="FullName" placeholder="Ana Beatriz Costa" autocomplete="name" />
+                            <span class="nc-error-text" asp-validation-for="FullName"></span>
+                        </div>
+
+                        <div class="nc-field" id="crn-field"
+                             style="@(Model?.Role == UserRoleEnum.Profissional ? "" : "display:none")">
+                            <label class="nc-label" asp-for="CrnRegistration">
+                                Registro CRN <span class="nc-req">*</span>
+                            </label>
+                            <input
+                            class="nc-input @(ViewData.ModelState["CrnRegistration"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                            asp-for="CrnRegistration" placeholder="CRN-3 12345" />
+                            <span class="nc-hint">Verificamos seu registro antes de publicar o perfil.</span>
+                            <span class="nc-error-text" asp-validation-for="CrnRegistration"></span>
+                        </div>
+
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="Email">E-mail</label>
+                            <div class="nc-input-group">
+                                <span class="nc-input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                    </svg>
+                                </span>
+                                <input
+                                class="nc-input @(ViewData.ModelState["Email"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                asp-for="Email" type="email" placeholder="voce@email.com" autocomplete="email" />
+                            </div>
+                            <span class="nc-error-text" asp-validation-for="Email"></span>
+                        </div>
+
+                        <div class="row2">
+                            <div class="nc-field">
+                                <label class="nc-label" asp-for="Password">Senha</label>
+                                <div class="pw-field">
+                                    <input
+                                    class="nc-input @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                    asp-for="Password" type="password" id="pw1" placeholder="Mínimo 8 caracteres"
+                                    autocomplete="new-password" />
+                                    <button type="button" class="field-icon-btn" id="togglePw1Btn"
+                                            aria-label="Mostrar senha">
+                                        <svg id="eyeIcon1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span class="nc-error-text" asp-validation-for="Password"></span>
+                            </div>
+                            <div class="nc-field">
+                                <label class="nc-label" asp-for="ConfirmPassword">Confirmar senha</label>
+                                <div class="pw-field">
+                                    <input
+                                    class="nc-input @(ViewData.ModelState["ConfirmPassword"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                    asp-for="ConfirmPassword" type="password" id="pw2" placeholder="Repita a senha"
+                                    autocomplete="new-password" />
+                                    <button type="button" class="field-icon-btn" id="togglePw2Btn"
+                                            aria-label="Mostrar senha">
+                                        <svg id="eyeIcon2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span class="nc-error-text" asp-validation-for="ConfirmPassword"></span>
+                            </div>
+                        </div>
+
+                        <label class="nc-check">
+                            <input type="checkbox" asp-for="AcceptedTerms" />
+                            <span class="nc-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </span>
+                            Li e aceito os <a class="link" href="#">Termos de Uso</a> e a <a class="link" href="#">Política
+                            de Privacidade</a>.
+                        </label>
+                        <span class="nc-error-text" asp-validation-for="AcceptedTerms"></span>
+
+                        <button class="nc-btn nc-btn--primary nc-btn--lg nc-btn--block" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14" />
+                                <path d="m12 5 7 7-7 7" />
+                            </svg>
+                            Criar conta
+                        </button>
+                    </form>
+
+                    <p class="auth__alt">Já tem uma conta? <a href="/Account/Login">Entrar</a></p>
+                </div>
+            </main>
+        </div>
+
+@section Scripts {
+        <script>
+                function setupTogglePw(inputId, btnId, iconId) {
+                    const input = document.getElementById(inputId);
+                    const btn = document.getElementById(btnId);
+                    const icon = document.getElementById(iconId);
+                    btn.addEventListener('click', () => {
+                        const showing = input.type === 'text';
+                        input.type = showing ? 'password' : 'text';
+                        icon.innerHTML = showing
+                            ? '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'
+                            : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" x2="23" y1="1" y2="23"/>';
+                    });
+                }
+                setupTogglePw('pw1', 'togglePw1Btn', 'eyeIcon1');
+                setupTogglePw('pw2', 'togglePw2Btn', 'eyeIcon2');
+
+                const crnField = document.getElementById('crn-field');
+                document.getElementById('role-pro').addEventListener('change', () => crnField.style.display = '');
+                document.getElementById('role-cliente').addEventListener('change', () => crnField.style.display = 'none');
+        </script>
+}

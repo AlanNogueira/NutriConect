@@ -1,0 +1,353 @@
+@model NutriConect.Business.ViewModels.RecipeDetailViewModel
+@using NutriConect.Business.Enums
+@using NutriConect.Business.Extensions
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = Model.Title;
+    ViewData["ActiveNav"] = "receitas";
+}
+
+@functions {
+    const string FullStar = "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" style=\"width:16px;height:16px;color:var(--color-warning,#f59e0b)\"><path d=\"m12 2 3 6.3 6.9.9-5 4.8 1.2 6.8L12 17.6 5.9 20.8l1.2-6.8-5-4.8 6.9-.9z\"/></svg>";
+    const string EmptyStar = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" style=\"width:16px;height:16px;color:var(--color-border)\"><path d=\"m12 2 3 6.3 6.9.9-5 4.8 1.2 6.8L12 17.6 5.9 20.8l1.2-6.8-5-4.8 6.9-.9z\"/></svg>";
+
+    static string Stars(int filled)
+    {
+        var html = "";
+        for (var i = 1; i <= 5; i++) html += i <= filled ? FullStar : EmptyStar;
+        return html;
+    }
+
+    static string RelativeTime(DateTimeOffset when)
+    {
+        var diff = DateTimeOffset.UtcNow - when;
+        if (diff.TotalMinutes < 1) return "agora";
+        if (diff.TotalMinutes < 60) return $"há {(int)diff.TotalMinutes} min";
+        if (diff.TotalHours < 24) return $"há {(int)diff.TotalHours} h";
+        if (diff.TotalDays < 2) return "ontem";
+        if (diff.TotalDays < 7) return $"há {(int)diff.TotalDays} dias";
+        if (diff.TotalDays < 30) return $"há {(int)(diff.TotalDays / 7)} semana(s)";
+        return when.ToLocalTime().ToString("dd/MM/yyyy");
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/components/reviews.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/recipe-details.css" asp-append-version="true" />
+}
+
+
+<main class="page">
+    <nav class="nc-breadcrumb" style="margin-bottom:var(--space-4)">
+        <a asp-controller="Home" asp-action="Index">Início</a>
+        <span>›</span>
+        <a asp-controller="Recipe" asp-action="Index">Receitas</a>
+        <span>›</span>
+        <span style="color:var(--color-text)">@Model.Title</span>
+    </nav>
+
+    <partial name="_SuccessAlert" model="@(TempData["Success"] as string)" />
+
+    @if (TempData["Error"] is string err)
+    {
+        <div class="nc-alert nc-alert--danger" style="margin-bottom:var(--space-5)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;width:16px;height:16px">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <div>@err</div>
+        </div>
+    }
+
+    <div class="cols cols--detail">
+        <article class="stack">
+            <section class="nc-card" style="overflow:hidden">
+                <div class="imgph" style="height:300px;font-size:var(--text-sm)">foto do prato finalizado</div>
+                <div style="padding:var(--space-6)">
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-3)">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <span class="nc-badge nc-badge--neutral">@cat.GetDisplayName()</span>
+                        }
+                        @if (Model.ApprovedByNutritionist)
+                        {
+                            <span class="nc-badge nc-badge--success nc-badge--dot">Aprovada por nutricionista</span>
+                        }
+                    </div>
+                    <h1
+                        style="font-size:var(--text-3xl);font-weight:var(--weight-extra);letter-spacing:var(--tracking-tight);margin:0 0 var(--space-3)">
+                        @Model.Title</h1>
+                        @if (!string.IsNullOrWhiteSpace(Model.ShortDescription))
+                        {
+                            <p class="muted"
+                               style="margin:0 0 var(--space-5);line-height:var(--leading-relaxed);max-width:60ch">
+                                @Model.ShortDescription</p>
+                            }
+                            <div class="meta-row" style="gap:var(--space-6)">
+                                @if (Model.ReviewCount > 0)
+                                {
+                                    <span class="nc-rating">@Html.Raw(Stars((int)Math.Round(Model.AverageRating!.Value)))<b
+                                        class="nc-rating__value" style="color:var(--color-text)">@Model.AverageDisplay</b><span
+                                        class="nc-rating__count">(@Model.ReviewCount)</span></span>
+                                    }
+                                    @if (Model.PrepMinutes.HasValue)
+                                    {
+                                        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                   stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="9" />
+                                            <polyline points="12 7 12 12 16 14" />
+                                        </svg><b style="color:var(--color-text)">@Model.PrepMinutes min</b></span>
+                                    }
+                                    @if (Model.CaloriesPerServing.HasValue)
+                                    {
+                                        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                   stroke-linecap="round" stroke-linejoin="round">
+                                            <path
+                                            d="M12 2C8 6 6 9 6 13a6 6 0 0 0 12 0c0-2-1-4-2-5-1 2-2 2.5-3 2.5C12 8 13 5 12 2z" />
+                                        </svg><b style="color:var(--color-text)">@Model.CaloriesPerServing kcal</b></span>
+                                    }
+                                    @if (Model.Servings.HasValue)
+                                    {
+                                        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                   stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                            <circle cx="9" cy="7" r="4" />
+                                        </svg><b style="color:var(--color-text)">@Model.Servings porç@(Model.Servings == 1 ? "ão" :
+                                                                                                                                                                                  "ões")</b></span>
+                                    }
+                                    <span class="nc-badge nc-badge--neutral">@Model.Difficulty.GetDisplayName()</span>
+                                </div>
+                                <div
+                                    style="display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-5);padding-top:var(--space-5);border-top:1px solid var(--color-border)">
+                                    <span class="nc-avatar nc-avatar--sm"
+                                          style="background:var(--color-primary-soft);color:var(--color-primary-soft-text)">@Model.AuthorInitials</span>
+                                    <span style="font-size:var(--text-sm)">Receita de <b>@Model.AuthorName</b></span>
+                                    @if (Model.CanEdit)
+                                    {
+                                        <a class="nc-btn nc-btn--outline nc-btn--sm" style="margin-left:auto" asp-controller="Recipe"
+                                           asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+                                        <form method="post" asp-controller="Recipe" asp-action="Delete" asp-route-id="@Model.Id"
+                                              data-confirm="Tem certeza que deseja excluir esta receita? Esta ação não pode ser desfeita."
+                                              data-confirm-title="Excluir receita" data-confirm-ok="Excluir" data-confirm-danger="true"
+                                              style="margin:0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="nc-btn nc-btn--ghost nc-btn--sm">Excluir</button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </section>
+
+                        @if (Model.Steps.Any())
+                        {
+                            <section class="nc-card nc-card--pad">
+                                <h2 class="section-title">Modo de preparo</h2>
+                                @for (var i = 0; i < Model.Steps.Count; i++)
+                                {
+                                    <div class="recipe-step"><span class="recipe-step__n">@(i + 1)</span>
+                                        <p>@Model.Steps[i]</p>
+                                    </div>
+                                }
+                            </section>
+                        }
+
+                        <section class="nc-card nc-card--pad" id="avaliacoes">
+                            <h2 class="section-title">Avaliações</h2>
+
+                            @if (Model.ReviewCount > 0)
+                            {
+                                <div class="rating-summary">
+                                    <div class="rating-summary__avg">
+                                        <div class="big">@Model.AverageDisplay</div>
+                                        <div class="nc-rating" style="justify-content:center;margin-top:var(--space-2)">
+                                            @Html.Raw(Stars((int)Math.Round(Model.AverageRating!.Value)))</div>
+                                            <div class="subtle" style="font-size:var(--text-xs);margin-top:var(--space-1)">
+                                                @Model.ReviewCount avaliaç@(Model.ReviewCount == 1 ? "ão" : "ões")</div>
+                                            </div>
+                                            <div class="rating-dist">
+                                                @foreach (var b in Model.Distribution)
+                                                {
+                                                    <div class="rating-dist__row">
+                                                        <span style="width:10px;font-weight:600">@b.Star</span>
+                                                        <div class="nc-progress" style="flex:1;height:8px">
+                                                            <div class="nc-progress__bar nc-progress__bar--coral" style="width:@b.Percent%"></div>
+                                                        </div>
+                                                        <span class="subtle mono" style="width:34px;text-align:right">@b.Percent%</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                else
+                                    {
+                                        <p class="muted" style="margin:0 0 var(--space-5)">Esta receita ainda não recebeu avaliações. Seja o
+                                            primeiro a avaliar.</p>
+                                        }
+
+                                        @if (Model.CanReview)
+                                        {
+                                            <div class="nc-card"
+                                                 style="background:var(--color-surface-sunken);border:none;padding:var(--space-5);margin-bottom:var(--space-6)">
+                                                <form method="post" asp-controller="Recipe" asp-action="Review">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="RecipeId" value="@Model.Id" />
+                                                    <div style="font-weight:var(--weight-bold);margin-bottom:var(--space-3)">Você fez esta receita?
+                                                        Deixe sua avaliação</div>
+                                                        <div style="display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap">
+                                                            <div class="starpick" id="my-stars">
+                                                                @for (var v = 1; v <= 5; v++)
+                                                                {
+                                                                    <label data-v="@v">
+                                                                        <input type="radio" name="Rating" value="@v" required />
+                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                             stroke-linejoin="round">
+                                                                            <path
+                                                                            d="m12 2 3 6.3 6.9.9-5 4.8 1.2 6.8L12 17.6 5.9 20.8l1.2-6.8-5-4.8 6.9-.9z" />
+                                                                        </svg>
+                                                                    </label>
+                                                                }
+                                                            </div>
+                                                            <span class="subtle" id="my-label" style="font-size:var(--text-sm)">Toque nas estrelas para
+                                                                dar sua nota</span>
+                                                            </div>
+                                                            <textarea class="nc-textarea" name="Comment" maxlength="1000" style="margin-top:var(--space-4)"
+                                                                      placeholder="Conte o que achou da receita… (opcional)"></textarea>
+                                                            <div
+                                                                style="display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-3);gap:var(--space-3);flex-wrap:wrap">
+                                                                <label class="nc-check">
+                                                                    <input type="checkbox" name="IsAnonymous" value="true" />
+                                                                    <span class="nc-box">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                                             stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                                                             stroke-linejoin="round" class="nc-box__check">
+                                                                            <polyline points="20 6 9 17 4 12" />
+                                                                        </svg>
+                                                                    </span>
+                                                                    Avaliação anônima
+                                                                </label>
+                                                                <button type="submit" class="nc-btn nc-btn--primary">Enviar avaliação</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                }
+                else if (Model.AlreadyReviewed)
+                                                {
+                                                    <div class="nc-alert nc-alert--info" style="margin-bottom:var(--space-6)">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             style="flex-shrink:0;width:16px;height:16px">
+                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                                        </svg>
+                                                        <div>Você já avaliou esta receita.</div>
+                                                    </div>
+                                                }
+                                                else if (Model.IsAuthor)
+                                                {
+                                                    <div class="nc-alert nc-alert--info" style="margin-bottom:var(--space-6)">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             style="flex-shrink:0;width:16px;height:16px">
+                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                                        </svg>
+                                                        <div>Esta é a sua receita — você não pode avaliá-la.</div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="nc-alert nc-alert--info" style="margin-bottom:var(--space-6)">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             style="flex-shrink:0;width:16px;height:16px">
+                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                                        </svg>
+                                                        <div><a asp-controller="Account" asp-action="Login"
+                                                                    style="color:var(--color-primary-soft-text)">Entre</a> para avaliar esta receita.</div>
+                                                        </div>
+                                                    }
+
+                                                    @foreach (var review in Model.Reviews)
+                                                    {
+                                                        <div class="review">
+                                                            <div class="review__head">
+                                                                <span class="nc-avatar nc-avatar--sm"
+                                                                      style="background:var(--color-primary-soft);color:var(--color-primary-soft-text)">@review.AuthorInitials</span>
+                                                                <div style="flex:1">
+                                                                    <div style="font-weight:var(--weight-bold);font-size:var(--text-sm)">@review.AuthorName
+                                                                    </div>
+                                                                    <div class="subtle" style="font-size:var(--text-xs)">@RelativeTime(review.CreatedAt)</div>
+                                                                </div>
+                                                                <span class="nc-rating">@Html.Raw(Stars(review.Rating))</span>
+                                                            </div>
+                                                            @if (!string.IsNullOrWhiteSpace(review.Comment))
+                                                            {
+                                                                <p class="muted" style="margin:0;line-height:var(--leading-relaxed)">@review.Comment</p>
+                                                            }
+                                                            @if (review.CanDelete)
+                                                            {
+                                                                <form method="post" asp-controller="Recipe" asp-action="DeleteReview"
+                                                                      style="margin-top:var(--space-2)"
+                                                                      data-confirm="Tem certeza que deseja excluir sua avaliação? Esta ação não pode ser desfeita."
+                                                                      data-confirm-title="Excluir avaliação" data-confirm-ok="Excluir" data-confirm-danger="true">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" name="reviewId" value="@review.Id" />
+                                                                    <input type="hidden" name="recipeId" value="@Model.Id" />
+                                                                    <button type="submit" class="nc-btn nc-btn--ghost nc-btn--sm">Excluir avaliação</button>
+                                                                </form>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </section>
+                                            </article>
+
+                                            <aside class="sticky">
+                                                <div class="nc-card nc-card--pad">
+                                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)">
+                                                        <div style="font-weight:var(--weight-bold)">Ingredientes</div>
+                                                        @if (Model.Servings.HasValue)
+                                                        {
+                                                            <span class="nc-badge nc-badge--neutral">@Model.Servings porç@(Model.Servings == 1 ? "ão" :
+                                                                                                                                                                                                                                                                                "ões")</span>
+                                                            }
+                                                        </div>
+                                                        @if (Model.Ingredients.Any())
+                                                        {
+                                                            @foreach (var ing in Model.Ingredients)
+                                                            {
+                                                                <div class="ing-item"><span>@ing</span></div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="muted" style="font-size:var(--text-sm);margin:0">Nenhum ingrediente informado.</p>
+                                                        }
+                                                    </div>
+                                                </aside>
+                                            </div>
+                                        </main>
+
+                                        @section Scripts {
+                                            <script>
+                                                const picker = document.getElementById('my-stars');
+                                                if (picker) {
+                                                    const LABELS = { 1: 'Não gostei', 2: 'Regular', 3: 'Boa', 4: 'Muito boa', 5: 'Excelente!' };
+                                                    const lbl = document.getElementById('my-label');
+                                                    let rating = 0;
+                                                    const paint = v => picker.querySelectorAll('label').forEach(l => l.classList.toggle('on', +l.dataset.v <= v));
+                                                    picker.querySelectorAll('label').forEach(l => {
+                                                        l.addEventListener('mouseenter', () => { paint(+l.dataset.v); lbl.textContent = LABELS[+l.dataset.v]; });
+                                                        l.querySelector('input').addEventListener('change', () => { rating = +l.dataset.v; paint(rating); lbl.textContent = LABELS[rating]; });
+                                                    });
+                                                    picker.addEventListener('mouseleave', () => { paint(rating); lbl.textContent = rating ? LABELS[rating] : 'Toque nas estrelas para dar sua nota'; });
+                                                }
+
+                                                @if (TempData["Success"] is string s && s.Contains("valia"))
+                                                    {
+                                                        <text>document.getElementById('avaliacoes')?.scrollIntoView({behavior: 'smooth' });</text>
+                                                }
+                                            </script>
+                                        }

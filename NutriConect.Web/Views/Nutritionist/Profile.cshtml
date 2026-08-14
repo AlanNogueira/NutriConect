@@ -1,0 +1,552 @@
+@model NutriConect.Business.InputModels.UpdateNutritionistProfileInputModel
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = "Minha conta";
+    var initials = (string)(ViewBag.Initials ?? "?");
+    var email = (string)(ViewBag.Email ?? "");
+    var crnVerified = (bool)(ViewBag.CrnVerified ?? false);
+    var crnRegistration = (string)(ViewBag.CrnRegistration ?? "");
+    var nutritionistId = (int)(ViewBag.NutritionistId ?? 0);
+}
+
+<main class="page">
+    <header class="page-head">
+        <nav class="nc-breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <span style="display:inline-flex;align-items:center;width:16px;height:16px;color:var(--color-text-soft)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </span>
+            <span style="color:var(--color-text)">Minha conta</span>
+        </nav>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap">
+            <div>
+                <h1>Minha conta</h1>
+                <p>Gerencie seu perfil público, atendimento e dados profissionais.</p>
+            </div>
+            @if (nutritionistId > 0)
+            {
+                <a class="nc-btn nc-btn--outline" asp-controller="Nutritionist" asp-action="Public"
+                   asp-route-id="@nutritionistId" style="display:flex;align-items:center;gap:var(--space-2)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    Ver perfil público
+                </a>
+            }
+        </div>
+    </header>
+
+    @if (TempData["Success"] is string successMsg)
+    {
+        <div class="nc-alert nc-alert--success" style="margin-bottom:var(--space-5)" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <div>@successMsg</div>
+        </div>
+    }
+
+    <div class="cols cols--sidebar">
+        <aside class="sticky">
+            <nav class="acct-nav">
+                <a class="nc-sidelink nc-sidelink--active" href="#perfil-publico"
+                   style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                        </svg>
+                    </span>
+                    Perfil público
+                </a>
+                <a class="nc-sidelink" href="#atendimento" style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                            <line x1="16" x2="16" y1="2" y2="6" />
+                            <line x1="8" x2="8" y1="2" y2="6" />
+                            <line x1="3" x2="21" y1="10" y2="10" />
+                        </svg>
+                    </span>
+                    Atendimento &amp; valores
+                </a>
+                <a class="nc-sidelink" href="#credenciais" style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                    </span>
+                    Credenciais
+                </a>
+                <a class="nc-sidelink" href="#dados-pessoais"
+                   style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </span>
+                    Dados pessoais
+                </a>
+                <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="nc-sidelink"
+                            style="display:flex;align-items:center;gap:var(--space-2);width:100%;background:none;border:none;text-align:left;cursor:pointer;color:var(--color-danger-soft-text)">
+                        <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" x2="9" y1="12" y2="12" />
+                            </svg>
+                        </span>
+                        Sair
+                    </button>
+                </form>
+            </nav>
+        </aside>
+
+        <form asp-action="Profile" asp-controller="Nutritionist" method="post" class="stack">
+            @Html.AntiForgeryToken()
+
+            <section class="nc-card nc-card--pad"
+                     style="display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap">
+                <span class="nc-avatar nc-avatar--lg"
+                      style="background:var(--color-primary-soft);color:var(--color-primary-soft-text)">@initials</span>
+                <div style="flex:1;min-width:200px">
+                    <div style="display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap">
+                        <span style="font-weight:var(--weight-bold)">@Model.DisplayName</span>
+                        @if (crnVerified)
+                        {
+                            <span class="nc-badge nc-badge--teal">CRN verificado</span>
+                        }
+                    </div>
+                    <p class="subtle" style="margin:2px 0 0;font-size:var(--text-sm)">@crnRegistration</p>
+                </div>
+                <label class="nc-switch">
+                    <span style="font-weight:var(--weight-medium);margin-right:var(--space-2)">Disponível para novos
+                        pacientes</span>
+                        <input asp-for="AvailableForNewPatients" type="checkbox" />
+                        <span class="nc-track"><span class="nc-thumb"></span></span>
+                    </label>
+                </section>
+
+                <section class="nc-card nc-card--pad" id="perfil-publico">
+                    <h2 class="section-title">Perfil público</h2>
+
+                    <div style="display:flex;align-items:center;gap:var(--space-5);margin-bottom:var(--space-6)">
+                        <span class="nc-avatar nc-avatar--xl"
+                              style="background:var(--color-primary-soft);color:var(--color-primary-soft-text)">@initials</span>
+                        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+                            <span class="nc-hint">JPG ou PNG, até 4 MB. (upload em breve)</span>
+                        </div>
+                    </div>
+
+                    <div class="stack stack--sm">
+                        <div class="row2">
+                            <div class="nc-field">
+                                <label class="nc-label" asp-for="DisplayName">Nome de exibição</label>
+                                <input
+                                class="nc-input @(ViewData.ModelState["DisplayName"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                asp-for="DisplayName" placeholder="Ex: Dra. Marina Reis" />
+                                <span class="nc-error-text" asp-validation-for="DisplayName"></span>
+                            </div>
+                            <div class="nc-field">
+                                <label class="nc-label" asp-for="ProfessionalTitle">Título profissional</label>
+                                <input class="nc-input" asp-for="ProfessionalTitle"
+                                       placeholder="Ex: Nutricionista esportiva" />
+                            </div>
+                        </div>
+                        <div class="row2">
+                            <div class="nc-field">
+                                <label class="nc-label" asp-for="MainSpecialty">Especialidade principal</label>
+                                <select class="nc-select" asp-for="MainSpecialty"
+                                        asp-items="Html.GetEnumSelectList<NutritionistSpecialtyEnum>()">
+                                    <option value="">Selecione…</option>
+                                </select>
+                            </div>
+                            <div class="nc-field">
+                                <label class="nc-label" asp-for="YearsOfExperience">Anos de experiência</label>
+                                <input class="nc-input" asp-for="YearsOfExperience" type="number" min="0" max="60"
+                                       style="max-width:140px" />
+                            </div>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label">Especialidades</label>
+                            <div id="specialties-chips" style="display:flex;flex-wrap:wrap;gap:var(--space-2)">
+                                @foreach (var s in Enum.GetValues<NutriConect.Business.Enums.NutritionistSpecialtyEnum>())
+                                {
+                                    <button type="button"
+                                            class="nc-chip @(Model.Specialties.Contains(s) ? "nc-chip--active" : "")"
+                                            data-value="@s" onclick="toggleChip(this, 'Specialties')">@s.GetDisplayName()</button>
+                                }
+                            </div>
+                            <div id="Specialties-hidden"></div>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="About">Sobre você</label>
+                            <textarea class="nc-textarea" asp-for="About" rows="5"
+                                      placeholder="Conte sua abordagem, experiência e diferenciais…"></textarea>
+                            <span class="nc-hint">Aparece na aba "Sobre" do seu perfil público.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="nc-card nc-card--pad" id="atendimento">
+                    <h2 class="section-title">Atendimento &amp; valores</h2>
+                    <div class="stack stack--sm">
+                        <label class="nc-switch" style="justify-content:space-between;width:100%">
+                            <span style="flex:1;font-weight:var(--weight-semibold);font-size:var(--text-sm)">Atendimento
+                                online (vídeo)</span>
+                                <input asp-for="AcceptsOnline" type="checkbox" />
+                                <span class="nc-track"><span class="nc-thumb"></span></span>
+                            </label>
+                            <hr class="divider" style="margin:0" />
+                            <label class="nc-switch" style="justify-content:space-between;width:100%">
+                                <span style="flex:1;font-weight:var(--weight-semibold);font-size:var(--text-sm)">Atendimento
+                                    presencial</span>
+                                    <input asp-for="AcceptsInPerson" type="checkbox" />
+                                    <span class="nc-track"><span class="nc-thumb"></span></span>
+                                </label>
+                                <hr class="divider" style="margin:0" />
+                                <div class="row2">
+                                    <div class="nc-field">
+                                        <label class="nc-label" for="PricePerSessionDisplay">Valor da consulta (R$)</label>
+                                        <input type="hidden" name="PricePerSession"
+                                               value="@Model.PricePerSession.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                        <input
+                                        class="nc-input @(ViewData.ModelState["PricePerSession"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                        type="text" id="PricePerSessionDisplay" inputmode="decimal" placeholder="0,00" />
+                                        <span class="nc-error-text" asp-validation-for="PricePerSession"></span>
+                                    </div>
+                                    <div class="nc-field">
+                                        <label class="nc-label" asp-for="SessionDurationMinutes">Duração</label>
+                                        <select class="nc-select" asp-for="SessionDurationMinutes"
+                                                asp-items="Html.GetEnumSelectList<NutriConect.Business.Enums.SessionDurationEnum>()">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="nc-field">
+                                    <label class="nc-label" asp-for="OfficeAddress">Endereço do consultório</label>
+                                    <div class="nc-input-group">
+                                        <span class="nc-input-icon"
+                                              style="display:inline-flex;align-items:center;justify-content:center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                 stroke-linejoin="round" style="width:16px;height:16px">
+                                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                                <circle cx="12" cy="10" r="3" />
+                                            </svg>
+                                        </span>
+                                        <input class="nc-input" asp-for="OfficeAddress" placeholder="Rua, número · Cidade, UF" />
+                                    </div>
+                                </div>
+                                <div class="nc-field">
+                                    <label class="nc-label">Formas de pagamento aceitas</label>
+                                    <div style="display:flex;flex-wrap:wrap;gap:var(--space-5);margin-top:var(--space-1)">
+                                        @foreach (var pm in Enum.GetValues<NutriConect.Business.Enums.PaymentMethodEnum>())
+                                        {
+                                            <label class="nc-check">
+                                                <input type="checkbox" name="PaymentMethods" value="@pm"
+                                                @(Model.PaymentMethods.Contains(pm) ? "checked" : "") />
+                                                <span class="nc-box">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                                         stroke-linejoin="round" class="nc-box__check">
+                                                        <polyline points="20 6 9 17 4 12" />
+                                                    </svg>
+                                                </span>
+                                                @pm.GetDisplayName()
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="nc-card nc-card--pad" id="credenciais">
+                            <h2 class="section-title">Credenciais &amp; formação</h2>
+                            <div class="nc-field" style="margin-bottom:var(--space-5);max-width:300px">
+                                <label class="nc-label">Registro CRN</label>
+                                <div class="nc-input-group">
+                                    <span class="nc-input-icon"
+                                          style="display:inline-flex;align-items:center;justify-content:center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                             style="width:16px;height:16px">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                        </svg>
+                                    </span>
+                                    <input class="nc-input" value="@crnRegistration" readonly disabled />
+                                </div>
+                                @if (crnVerified)
+                                {
+                                    <span class="nc-badge nc-badge--success"
+                                          style="align-self:flex-start;margin-top:var(--space-1)">Verificado pela NutriConect</span>
+                                }
+                            </div>
+                            <div id="cred-list" class="stack stack--sm">
+                                @for (var i = 0; i < Model.Credentials.Count; i++)
+                                {
+                                    <div class="editrow">
+                                        <span class="editrow__num"
+                                              style="background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:var(--radius-md);flex-shrink:0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 style="width:18px;height:18px;color:var(--color-primary)">
+                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                <polyline points="22 4 12 14.01 9 11.01" />
+                                            </svg>
+                                        </span>
+                                        <input class="nc-input" name="Credentials[@i]" value="@Model.Credentials[i]"
+                                               placeholder="Ex: Graduação em Nutrição — USP · 2014" />
+                                        <button type="button" class="nc-btn nc-btn--ghost nc-btn--icon" aria-label="Remover"
+                                                onclick="removeCred(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 style="width:16px;height:16px">
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6" />
+                                                <path d="M10 11v6" />
+                                                <path d="M14 11v6" />
+                                                <path d="M9 6V4h6v2" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                            <button type="button" class="nc-btn nc-btn--outline nc-btn--sm"
+                                    style="margin-top:var(--space-4);display:flex;align-items:center;gap:var(--space-2)"
+                                    onclick="addCred()">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                     style="width:15px;height:15px">
+                                    <line x1="12" x2="12" y1="5" y2="19" />
+                                    <line x1="5" x2="19" y1="12" y2="12" />
+                                </svg>
+                                Adicionar formação
+                            </button>
+                        </section>
+
+                        <section class="nc-card nc-card--pad" id="dados-pessoais">
+                            <h2 class="section-title">Dados pessoais <span class="subtle"
+                                                                           style="font-weight:var(--weight-regular);font-size:var(--text-sm)">· não aparecem no perfil
+                                público</span></h2>
+                                <div class="stack stack--sm">
+                                    <div class="row2">
+                                        <div class="nc-field">
+                                            <label class="nc-label" asp-for="FullName">Nome completo</label>
+                                            <input
+                                            class="nc-input @(ViewData.ModelState["FullName"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                            asp-for="FullName" placeholder="Seu nome legal" />
+                                            <span class="nc-error-text" asp-validation-for="FullName"></span>
+                                        </div>
+                                        <div class="nc-field">
+                                            <label class="nc-label" asp-for="Phone">Telefone</label>
+                                            <input class="nc-input" asp-for="Phone" placeholder="(11) 99999-9999" />
+                                        </div>
+                                    </div>
+                                    <div class="row2">
+                                        <div class="nc-field">
+                                            <label class="nc-label">E-mail</label>
+                                            <div class="nc-input-group">
+                                                <span class="nc-input-icon"
+                                                      style="display:inline-flex;align-items:center;justify-content:center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                         stroke-linejoin="round" style="width:16px;height:16px">
+                                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                                    </svg>
+                                                </span>
+                                                <input class="nc-input" type="email" value="@email" readonly disabled />
+                                            </div>
+                                        </div>
+                                        <div class="nc-field">
+                                            <label class="nc-label" asp-for="City">Cidade</label>
+                                            <div class="nc-input-group">
+                                                <span class="nc-input-icon"
+                                                      style="display:inline-flex;align-items:center;justify-content:center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                         stroke-linejoin="round" style="width:16px;height:16px">
+                                                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                                        <circle cx="12" cy="10" r="3" />
+                                                    </svg>
+                                                </span>
+                                                <input class="nc-input" asp-for="City" placeholder="Cidade, UF" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="nc-field" style="max-width:220px">
+                                        <label class="nc-label" asp-for="BirthDate">Data de nascimento</label>
+                                        <input class="nc-input" asp-for="BirthDate" type="date" />
+                                    </div>
+                                </div>
+                            </section>
+
+                            <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                                <a asp-action="Profile" asp-controller="Nutritionist" class="nc-btn nc-btn--ghost">Cancelar</a>
+                                <button type="submit" class="nc-btn nc-btn--primary"
+                                        style="display:flex;align-items:center;gap:var(--space-2)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                         style="width:16px;height:16px">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    Salvar alterações
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </main>
+
+                @section Scripts {
+                    <script>
+                        function syncChips(groupId, fieldName) {
+                            const container = document.getElementById(fieldName + '-hidden');
+                            container.innerHTML = '';
+                            document.querySelectorAll('#' + groupId + ' .nc-chip--active').forEach((chip, i) => {
+                                const inp = document.createElement('input');
+                                inp.type = 'hidden';
+                                inp.name = fieldName + '[' + i + ']';
+                                inp.value = chip.dataset.value;
+                                container.appendChild(inp);
+                            });
+                        }
+
+                        function toggleChip(btn, fieldName) {
+                            btn.classList.toggle('nc-chip--active');
+                            syncChips('specialties-chips', fieldName);
+                        }
+
+                        syncChips('specialties-chips', 'Specialties');
+
+                        function getCredCount() {
+                            return document.querySelectorAll('#cred-list .editrow').length;
+                        }
+
+                        function removeCred(btn) {
+                            btn.closest('.editrow').remove();
+                            reindexCreds();
+                        }
+
+                        function reindexCreds() {
+                            document.querySelectorAll('#cred-list .editrow input[type="text"], #cred-list .editrow input:not([type])').forEach((inp, i) => {
+                                inp.name = 'Credentials[' + i + ']';
+                            });
+                        }
+
+                        function addCred() {
+                            const list = document.getElementById('cred-list');
+                            const idx = getCredCount();
+                            const row = document.createElement('div');
+                            row.className = 'editrow';
+                            row.innerHTML = `
+                                <span class="editrow__num" style="background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:var(--radius-md);flex-shrink:0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--color-primary)">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                                    </svg>
+                                </span>
+                                <input class="nc-input" name="Credentials[${idx}]" placeholder="Ex: Especialização em Nutrição Esportiva — UNIFESP · 2017" />
+                                <button type="button" class="nc-btn nc-btn--ghost nc-btn--icon" aria-label="Remover" onclick="removeCred(this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+                                        <polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                                    </svg>
+                                </button>`;
+                            list.appendChild(row);
+                            row.querySelector('input').focus();
+                        }
+
+                        (function () {
+                            const display = document.getElementById('PricePerSessionDisplay');
+                            const hidden = document.querySelector('input[type="hidden"][name="PricePerSession"]');
+                            if (!display || !hidden) return;
+
+                            function parse(v) {
+                                const s = v.trim();
+                                const di = s.lastIndexOf('.');
+                                const ci = s.lastIndexOf(',');
+                                let norm;
+                                if (di > ci) norm = s.replace(/,/g, '');
+                                else if (ci > di) norm = s.replace(/\./g, '').replace(',', '.');
+                                else norm = s.replace(',', '.');
+                                const n = parseFloat(norm.replace(/[^\d.]/g, ''));
+                                return isNaN(n) || n < 0 ? 0 : n;
+                            }
+
+                            function fmt(n) {
+                                return n > 0 ? n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
+                            }
+
+                            function syncHidden(n) {
+                                hidden.value = n > 0
+                                    ? n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                    : '0';
+                            }
+
+                            const initVal = parseFloat(hidden.value || '0');
+                            display.value = fmt(initVal);
+                            syncHidden(initVal);
+
+                            display.addEventListener('input', function () {
+                                const pos = this.selectionStart;
+                                const prev = this.value;
+
+                                let v = prev.replace(/[^\d,]/g, '');
+                                const ci = v.indexOf(',');
+                                if (ci !== -1) v = v.slice(0, ci + 1) + v.slice(ci + 1).replace(/\D/g, '').slice(0, 2);
+
+                                const [intRaw, decRaw] = v.split(',');
+                                const intNum = parseInt(intRaw || '0', 10);
+                                const intFmt = intRaw === '' ? '' : (isNaN(intNum) ? '' : intNum.toLocaleString('pt-BR'));
+                                this.value = decRaw !== undefined ? intFmt + ',' + decRaw : intFmt;
+
+                                const diff = this.value.length - prev.length;
+                                const newPos = Math.max(0, Math.min(this.value.length, pos + diff));
+                                this.setSelectionRange(newPos, newPos);
+
+                                syncHidden(parse(this.value));
+                            });
+
+                            display.addEventListener('blur', function () {
+                                const n = parse(this.value);
+                                this.value = fmt(n);
+                                syncHidden(n);
+                            });
+
+                            display.closest('form').addEventListener('submit', function () {
+                                syncHidden(parse(display.value));
+                            });
+                        }());
+
+                        function applyPhoneMask(value) {
+                            const digits = value.replace(/\D/g, '').slice(0, 11);
+                            if (digits.length === 0) return '';
+                            if (digits.length <= 2) return '(' + digits;
+                            if (digits.length <= 6) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2);
+                            if (digits.length <= 10) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 6) + '-' + digits.slice(6);
+                            return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 7) + '-' + digits.slice(7);
+                        }
+
+                        const phoneInput = document.getElementById('Phone');
+                        if (phoneInput) {
+                            phoneInput.value = applyPhoneMask(phoneInput.value);
+                            phoneInput.addEventListener('input', function () { this.value = applyPhoneMask(this.value); });
+                            phoneInput.form.addEventListener('submit', function () { phoneInput.value = phoneInput.value.replace(/\D/g, ''); });
+                        }
+                    </script>
+                }

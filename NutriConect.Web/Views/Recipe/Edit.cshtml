@@ -1,0 +1,33 @@
+@model NutriConect.Business.InputModels.RecipeInputModel
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = "Editar receita";
+    ViewData["ActiveNav"] = "receitas";
+    var recipeId = (int)ViewBag.RecipeId;
+}
+
+<main class="page page--narrow">
+    <header class="page-head">
+        <nav class="nc-breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <span>›</span>
+            <a asp-controller="Recipe" asp-action="Index">Receitas</a>
+            <span>›</span>
+            <a asp-controller="Recipe" asp-action="Details" asp-route-id="@recipeId">@Model.Title</a>
+            <span>›</span>
+            <span style="color:var(--color-text)">Editar</span>
+        </nav>
+        <h1>Editar receita</h1>
+        <p>Atualize os detalhes da sua receita.</p>
+    </header>
+
+    <form class="stack" method="post" asp-controller="Recipe" asp-action="Edit" asp-route-id="@recipeId">
+        @Html.AntiForgeryToken()
+        <partial name="_RecipeForm" model="Model" />
+
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+            <a class="nc-btn nc-btn--ghost" asp-controller="Recipe" asp-action="Details" asp-route-id="@recipeId">Cancelar</a>
+            <button type="submit" class="nc-btn nc-btn--primary">Salvar alterações</button>
+        </div>
+    </form>
+</main>

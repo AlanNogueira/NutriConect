@@ -1,0 +1,96 @@
+.nc-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nc-rating__value {
+  font-weight: var(--weight-bold);
+}
+
+.nc-rating__count {
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+}
+
+/* Resumo: nota média + distribuição por estrela */
+
+.rating-summary {
+  display: flex;
+  gap: var(--space-8);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.rating-summary__avg {
+  text-align: center;
+}
+
+.rating-summary__avg .big {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-extra);
+  line-height: 1;
+}
+
+.rating-dist {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rating-dist__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+/* Avaliação individual na listagem */
+
+.review {
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.review__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.starpick {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.starpick label {
+  cursor: pointer;
+  color: var(--color-border);
+  line-height: 0;
+}
+
+.starpick label svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  transition: fill var(--dur-fast), color var(--dur-fast);
+}
+
+.starpick label.on {
+  color: var(--color-warning, #f59e0b);
+}
+
+.starpick label.on svg {
+  fill: currentColor;
+}
+
+.starpick input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}

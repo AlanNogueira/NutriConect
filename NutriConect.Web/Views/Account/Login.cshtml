@@ -1,0 +1,145 @@
+@model NutriConect.Business.InputModels.LoginInputModel
+@{
+    ViewData["Title"] = "Entrar";
+    Layout = "_NcPublicLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/components/forms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/auth.css" asp-append-version="true" />
+}
+
+    <div class="auth">
+        <aside class="auth__brand">
+            <a class="auth__logo" href="/" style="text-decoration:none; color:inherit;">
+                <span class="mark">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                </span>
+                NutriConect
+            </a>
+            <div class="auth__pitch">
+                <h2>Bem-vindo de volta.</h2>
+                <p>Suas consultas, receitas favoritas e conversas com profissionais continuam exatamente de onde você
+                    parou.</p>
+                </div>
+
+            </aside>
+
+            <main class="auth__panel">
+                <div class="auth__card">
+                    <h1>Entrar</h1>
+                    <p class="lead">Acesse sua conta para continuar.</p>
+
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(string.Empty))
+                    {
+                        <div class="nc-alert nc-alert--danger" style="margin-bottom: 1.25rem;" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" x2="12" y1="8" y2="12" />
+                                <line x1="12" x2="12.01" y1="16" y2="16" />
+                            </svg>
+                            <div>
+                                @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                                {
+                                    <span>@error.ErrorMessage</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <form asp-action="Login" asp-controller="Account" method="post" class="auth__form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="Email">E-mail</label>
+                            <div class="nc-input-group">
+                                <span class="nc-input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                    </svg>
+                                </span>
+                                <input
+                                class="nc-input @(ViewData.ModelState["Email"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                asp-for="Email" type="email" placeholder="voce@email.com" autocomplete="email" />
+                            </div>
+                            <span class="nc-error-text" asp-validation-for="Email"></span>
+                        </div>
+
+                        <div class="nc-field">
+                            <div class="pw-field">
+                                <input
+                                class="nc-input @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                                asp-for="Password" type="password" id="pw" placeholder="Sua senha"
+                                autocomplete="current-password" />
+                                <button type="button" class="field-icon-btn" id="togglePwBtn" aria-label="Mostrar senha">
+                                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="auth__row">
+                                <label class="nc-label" asp-for="Password">Senha</label>
+                                <a class="link" href="#">Esqueci minha senha</a>
+                            </div>
+                            <span class="nc-error-text" asp-validation-for="Password"></span>
+                        </div>
+
+                        <label class="nc-check">
+                            <input type="checkbox" id="RememberMe" name="RememberMe" value="true" @(Model != null &&
+                                                                                                  Model.RememberMe ? "checked" : "") />
+                            <span class="nc-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </span>
+                            Manter-me conectado
+                        </label>
+                        <input type="hidden" name="RememberMe" value="false" />
+
+                        <button class="nc-btn nc-btn--primary nc-btn--lg nc-btn--block" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14" />
+                                <path d="m12 5 7 7-7 7" />
+                            </svg>
+                            Entrar
+                        </button>
+                    </form>
+
+                    <div class="auth__divider">ou</div>
+                    <button class="nc-btn nc-btn--outline nc-btn--block" type="button" disabled aria-disabled="true">
+                        Entrar com Google
+                    </button>
+
+                    <p class="auth__alt">Ainda não tem conta? <a href="/Account/Register">Criar conta</a></p>
+                </div>
+            </main>
+        </div>
+
+@section Scripts {
+        <script>
+                const pw = document.getElementById('pw');
+                const btn = document.getElementById('togglePwBtn');
+                const icon = document.getElementById('eyeIcon');
+                btn.addEventListener('click', () => {
+                    const showing = pw.type === 'text';
+                    pw.type = showing ? 'password' : 'text';
+                    icon.innerHTML = showing
+                        ? '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'
+                        : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" x2="23" y1="1" y2="23"/>';
+                });
+        </script>
+}

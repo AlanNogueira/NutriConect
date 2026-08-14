@@ -1,0 +1,218 @@
+@model NutriConect.Business.InputModels.UpdateClientProfileInputModel
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = "Minha conta";
+    var initials = (string)(ViewBag.Initials ?? "?");
+}
+
+<main class="page">
+    <header class="page-head">
+        <nav class="nc-breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <span style="display:inline-flex;align-items:center;width:16px;height:16px;color:var(--color-text-soft)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </span>
+            <span style="color:var(--color-text)">Minha conta</span>
+        </nav>
+        <h1>Minha conta</h1>
+        <p>Mantenha seus dados sempre atualizados para recomendações e atendimentos mais precisos.</p>
+    </header>
+
+    @if (TempData["Success"] is string successMsg)
+    {
+        <div class="nc-alert nc-alert--success" style="margin-bottom:var(--space-5)" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <div>@successMsg</div>
+        </div>
+    }
+
+    <div class="cols cols--sidebar">
+        <aside class="sticky">
+            <nav class="acct-nav">
+                <a class="nc-sidelink nc-sidelink--active" href="#dados-pessoais"
+                   style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                        </svg>
+                    </span>
+                    Dados pessoais
+                </a>
+                <a class="nc-sidelink" href="#objetivos" style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <circle cx="12" cy="12" r="6" />
+                            <circle cx="12" cy="12" r="2" />
+                        </svg>
+                    </span>
+                    Objetivos
+                </a>
+                <a class="nc-sidelink" href="#"
+                   style="display:flex;align-items:center;gap:var(--space-2);opacity:.45;pointer-events:none">
+                    <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </span>
+                    Segurança
+                </a>
+                <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="nc-sidelink"
+                            style="display:flex;align-items:center;gap:var(--space-2);width:100%;background:none;border:none;text-align:left;cursor:pointer;color:var(--color-danger-soft-text)">
+                        <span style="display:inline-flex;width:18px;height:18px;flex-shrink:0">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" x2="9" y1="12" y2="12" />
+                            </svg>
+                        </span>
+                        Sair
+                    </button>
+                </form>
+            </nav>
+        </aside>
+
+        <form asp-action="Profile" asp-controller="Client" method="post" class="stack">
+            @Html.AntiForgeryToken()
+
+            <section class="nc-card nc-card--pad" id="dados-pessoais">
+                <h2 class="section-title">Dados pessoais</h2>
+
+                <div style="display:flex;align-items:center;gap:var(--space-5);margin-bottom:var(--space-6)">
+                    <span class="nc-avatar nc-avatar--xl">@initials</span>
+                    <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+                        <span class="nc-hint">JPG ou PNG, até 4 MB. (upload em breve)</span>
+                    </div>
+                </div>
+
+                <div class="stack stack--sm">
+                    <div class="row2">
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="FullName">Nome completo</label>
+                            <input
+                            class="nc-input @(ViewData.ModelState["FullName"]?.Errors.Count > 0 ? "nc-input--error" : "")"
+                            asp-for="FullName" placeholder="Seu nome completo" />
+                            <span class="nc-error-text" asp-validation-for="FullName"></span>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="Phone">Telefone</label>
+                            <input class="nc-input" asp-for="Phone" placeholder="(11) 99999-9999" />
+                        </div>
+                    </div>
+                    <div class="row2">
+                        <div class="nc-field">
+                            <label class="nc-label">E-mail</label>
+                            <div class="nc-input-group">
+                                <span class="nc-input-icon"
+                                      style="display:inline-flex;align-items:center;justify-content:center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" style="width:16px;height:16px">
+                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                    </svg>
+                                </span>
+                                <input class="nc-input" type="email" value="@User.Identity?.Name" readonly disabled />
+                            </div>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="City">Cidade</label>
+                            <div class="nc-input-group">
+                                <span class="nc-input-icon"
+                                      style="display:inline-flex;align-items:center;justify-content:center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" style="width:16px;height:16px">
+                                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg>
+                                </span>
+                                <input class="nc-input" asp-for="City" placeholder="Sua cidade, UF" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nc-field" style="max-width:220px">
+                        <label class="nc-label" asp-for="BirthDate">Data de nascimento</label>
+                        <input class="nc-input" asp-for="BirthDate" type="date" />
+                    </div>
+                </div>
+            </section>
+
+            <section class="nc-card nc-card--pad" id="objetivos">
+                <h2 class="section-title">Objetivos</h2>
+                <div class="stack stack--sm">
+                    <div class="row2">
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="MainGoal">Objetivo principal</label>
+                            <select class="nc-select" asp-for="MainGoal"
+                                    asp-items="Html.GetEnumSelectList<ClientGoalEnum>()"></select>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label" asp-for="DietaryPreference">Preferência alimentar</label>
+                            <select class="nc-select" asp-for="DietaryPreference"
+                                    asp-items="Html.GetEnumSelectList<DietaryPreferenceEnum>()"></select>
+                        </div>
+                    </div>
+                    <div class="nc-field">
+                        <label class="nc-label" asp-for="About">Sobre mim</label>
+                        <textarea class="nc-textarea" asp-for="About" rows="4"
+                                  placeholder="Conte um pouco sobre sua rotina e seus objetivos…"></textarea>
+                        <span class="nc-hint">Essas informações ajudam o nutricionista a se preparar.</span>
+                    </div>
+                </div>
+            </section>
+
+            <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                <a asp-action="Profile" asp-controller="Client" class="nc-btn nc-btn--ghost">Cancelar</a>
+                <button type="submit" class="nc-btn nc-btn--primary"
+                        style="display:flex;align-items:center;gap:var(--space-2)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                         style="width:16px;height:16px">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Salvar alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        function applyPhoneMask(value) {
+            const digits = value.replace(/\D/g, '').slice(0, 11);
+            if (digits.length === 0) return '';
+            if (digits.length <= 2) return '(' + digits;
+            if (digits.length <= 6) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2);
+            if (digits.length <= 10) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 6) + '-' + digits.slice(6);
+            return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 7) + '-' + digits.slice(7);
+        }
+
+        const phoneInput = document.getElementById('Phone');
+        if (phoneInput) {
+            phoneInput.value = applyPhoneMask(phoneInput.value);
+            phoneInput.addEventListener('input', function () {
+                this.value = applyPhoneMask(this.value);
+            });
+            phoneInput.form.addEventListener('submit', function () {
+                phoneInput.value = phoneInput.value.replace(/\D/g, '');
+            });
+        }
+    </script>
+}

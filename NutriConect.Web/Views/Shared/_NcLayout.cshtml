@@ -1,0 +1,31 @@
+@{
+    var title = ViewData["Title"] as string;
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(string.IsNullOrEmpty(title) ? "NutriConect" : title + " · NutriConect")</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/nutriconect-tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/nutriconect.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components/appbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components/forms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components/confirm-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components/chat-widget.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components/theme-toggle.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="nc-scope">
+    <partial name="_NcAppBar" />
+    @RenderBody()
+    <partial name="_ConfirmModal" />
+    <partial name="_ChatWidget" />
+    <script src="~/js/theme-toggle.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

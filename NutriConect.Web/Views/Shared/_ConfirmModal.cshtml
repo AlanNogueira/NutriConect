@@ -1,0 +1,71 @@
+<div class="nc-confirm-overlay" id="nc-confirm" hidden>
+    <div class="nc-modal" role="dialog" aria-modal="true" aria-labelledby="nc-confirm-title">
+        <div class="nc-modal__head">
+            <div class="nc-modal__title" id="nc-confirm-title" data-confirm-title>Confirmar ação</div>
+        </div>
+        <div class="nc-modal__body" data-confirm-msg>Tem certeza?</div>
+        <div class="nc-modal__foot">
+            <button type="button" class="nc-btn nc-btn--ghost" data-confirm-cancel>Cancelar</button>
+            <button type="button" class="nc-btn nc-btn--primary" data-confirm-ok>Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const overlay = document.getElementById('nc-confirm');
+        if (!overlay) return;
+
+        const titleEl = overlay.querySelector('[data-confirm-title]');
+        const msgEl = overlay.querySelector('[data-confirm-msg]');
+        const okBtn = overlay.querySelector('[data-confirm-ok]');
+        const cancelBtn = overlay.querySelector('[data-confirm-cancel]');
+        let resolvePending = null;
+
+        function open({ title, message, okLabel, danger }) {
+            titleEl.textContent = title || 'Confirmar ação';
+            msgEl.textContent = message || 'Tem certeza?';
+            okBtn.textContent = okLabel || 'Confirmar';
+            okBtn.classList.toggle('nc-btn--danger', danger === true);
+            okBtn.classList.toggle('nc-btn--primary', danger !== true);
+            overlay.hidden = false;
+            document.body.style.overflow = 'hidden';
+            okBtn.focus();
+        }
+
+        function close(result) {
+            overlay.hidden = true;
+            document.body.style.overflow = '';
+            if (resolvePending) { resolvePending(result); resolvePending = null; }
+        }
+
+        window.ncConfirm = function (options) {
+            return new Promise(resolve => {
+                resolvePending = resolve;
+                open(options || {});
+            });
+        };
+
+        document.addEventListener('submit', function (e) {
+            const form = e.target;
+            if (form.matches('[data-confirm]') && form.dataset.confirmed !== 'true') {
+                e.preventDefault();
+                window.ncConfirm({
+                    title: form.dataset.confirmTitle,
+                    message: form.dataset.confirm,
+                    okLabel: form.dataset.confirmOk,
+                    danger: form.dataset.confirmDanger === 'true'
+                }).then(ok => {
+                    if (!ok) return;
+                    form.dataset.confirmed = 'true';
+                    if (form.requestSubmit) form.requestSubmit(); else form.submit();
+                });
+            }
+        }, true);
+
+        okBtn.addEventListener('click', () => close(true));
+        cancelBtn.addEventListener('click', () => close(false));
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(false); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !overlay.hidden) close(false); });
+    })();
+</script>

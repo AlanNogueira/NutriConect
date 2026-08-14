@@ -1,0 +1,47 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
+@if (User.Identity?.IsAuthenticated == true)
+{
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    <div id="chatWidget" class="chatw" data-user-id="@currentUserId" data-csrf="@tokens.RequestToken">
+        <button type="button" class="chatw__launcher" id="chatwLauncher" aria-label="Abrir mensagens" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+            <span class="chatw__badge" id="chatwBadge" hidden></span>
+        </button>
+
+        <div class="chatw__panel" id="chatwPanel" hidden>
+            <div class="chatw__header">
+                <button type="button" class="chatw__iconbtn" id="chatwBack" aria-label="Voltar para conversas" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+                </button>
+                <span class="nc-avatar nc-avatar--sm chatw__avatar" id="chatwHeaderAvatar" hidden></span>
+                <span class="chatw__title" id="chatwTitle">Mensagens</span>
+                <button type="button" class="chatw__iconbtn chatw__iconbtn--danger" id="chatwDelete" aria-label="Excluir conversa" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                </button>
+                <button type="button" class="chatw__iconbtn" id="chatwClose" aria-label="Fechar chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
+            </div>
+
+            <div class="chatw__body">
+                <div class="chatw__list" id="chatwList"></div>
+                <div class="chatw__thread" id="chatwThread" hidden>
+                    <div class="chatw__messages" id="chatwMessages"></div>
+                    <form class="chatw__composer" id="chatwComposer" autocomplete="off">
+                        <input type="text" class="chatw__input" id="chatwInput" maxlength="2000" placeholder="Digite uma mensagem…" aria-label="Mensagem" />
+                        <button type="submit" class="chatw__send" aria-label="Enviar mensagem">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/js/chat-widget.js" asp-append-version="true"></script>
+}

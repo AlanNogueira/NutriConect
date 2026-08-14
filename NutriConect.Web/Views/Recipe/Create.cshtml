@@ -1,0 +1,38 @@
+@model NutriConect.Business.InputModels.RecipeInputModel
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = "Cadastrar receita";
+    ViewData["ActiveNav"] = "receitas";
+}
+
+<main class="page page--narrow">
+    <header class="page-head">
+        <nav class="nc-breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <span>›</span>
+            <a asp-controller="Recipe" asp-action="Index">Receitas</a>
+            <span>›</span>
+            <span style="color:var(--color-text)">Nova receita</span>
+        </nav>
+        <h1>Cadastrar receita</h1>
+        <p>Compartilhe uma receita com a comunidade. Capriche nos detalhes para ajudar quem vai preparar.</p>
+    </header>
+
+    <form class="stack" method="post" asp-controller="Recipe" asp-action="Create">
+        @Html.AntiForgeryToken()
+        <partial name="_RecipeForm" model="Model" />
+
+        <div class="nc-alert nc-alert--info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+            <div class="nc-alert__body">
+                <div class="nc-alert__title">Revisão da comunidade</div>
+                <p style="margin:0">Receitas enviadas por nutricionistas recebem o selo "Aprovada por nutricionista".</p>
+            </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+            <a class="nc-btn nc-btn--ghost" asp-controller="Recipe" asp-action="Index">Cancelar</a>
+            <button type="submit" class="nc-btn nc-btn--primary">Publicar receita</button>
+        </div>
+    </form>
+</main>

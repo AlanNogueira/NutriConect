@@ -1,0 +1,150 @@
+@model NutriConect.Business.ViewModels.TipFeedViewModel
+@using NutriConect.Business.Enums
+@using NutriConect.Business.Extensions
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = "Dicas";
+    ViewData["ActiveNav"] = "dicas";
+    var isAuth = User.Identity?.IsAuthenticated == true;
+
+    string CategoryFilterUrl(TipCategoryEnum? cat) =>
+        Url.Action("Index", "Tip", new { category = cat?.ToString(), onlyProfessionals = Model.OnlyProfessionals })!;
+    string ProsFilterUrl(bool pros) =>
+        Url.Action("Index", "Tip", new { category = Model.Category?.ToString(), onlyProfessionals = pros })!;
+}
+
+@functions {
+    static string RelativeTime(DateTimeOffset when)
+    {
+        var diff = DateTimeOffset.UtcNow - when;
+        if (diff.TotalMinutes < 1) return "agora";
+        if (diff.TotalMinutes < 60) return $"há {(int)diff.TotalMinutes} min";
+        if (diff.TotalHours < 24) return $"há {(int)diff.TotalHours} h";
+        if (diff.TotalDays < 2) return "ontem";
+        if (diff.TotalDays < 7) return $"há {(int)diff.TotalDays} dias";
+        return when.ToLocalTime().ToString("dd/MM/yyyy");
+    }
+}
+
+<main class="page page--narrow" style="max-width:760px">
+    <header class="page-head">
+        <h1>Dicas da comunidade</h1>
+        <p>Pequenas dicas que fazem diferença na rotina — compartilhadas por clientes e profissionais.</p>
+    </header>
+
+    <partial name="_SuccessAlert" model="@(TempData["Success"] as string)" />
+
+    @if (isAuth)
+    {
+        <section class="nc-card nc-card--pad" style="margin-bottom:var(--space-8)">
+            <form method="post" asp-controller="Tip" asp-action="Create">
+                @Html.AntiForgeryToken()
+                <textarea class="nc-textarea" name="Body" placeholder="Compartilhe uma dica com a comunidade…"
+                          style="min-height:90px" maxlength="1000" required></textarea>
+                <div style="display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-3)">
+                    @foreach (var cat in Enum.GetValues<TipCategoryEnum>())
+                    {
+                        <label class="chip-check">
+                            <input type="radio" name="Category" value="@cat" />
+                            <span class="nc-chip">@cat.GetDisplayName()</span>
+                        </label>
+                    }
+                    <button type="submit" class="nc-btn nc-btn--primary" style="margin-left:auto">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                        Compartilhar dica
+                    </button>
+                </div>
+            </form>
+        </section>
+    }
+
+    <div style="display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-5)">
+        <a class="nc-chip @(Model.Category == null && !Model.OnlyProfessionals ? "nc-chip--active" : "")" href="@CategoryFilterUrl(null)" style="text-decoration:none">Todas</a>
+        <a class="nc-chip @(Model.OnlyProfessionals ? "nc-chip--active" : "")" href="@ProsFilterUrl(!Model.OnlyProfessionals)" style="text-decoration:none">De profissionais</a>
+        @foreach (var cat in Enum.GetValues<TipCategoryEnum>())
+        {
+            <a class="nc-chip @(Model.Category == cat ? "nc-chip--active" : "")" href="@CategoryFilterUrl(cat)" style="text-decoration:none">@cat.GetDisplayName()</a>
+        }
+    </div>
+
+    @if (Model.Total == 0)
+    {
+        <div class="nc-card" style="padding:var(--space-10);text-align:center;color:var(--color-text-muted)">
+            <p style="margin:0;font-size:var(--text-md)">Nenhuma dica por aqui ainda.</p>
+            @if (isAuth)
+            {
+                <p style="margin:var(--space-2) 0 0;font-size:var(--text-sm)">Seja o primeiro a compartilhar uma dica com a comunidade.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <section class="feed">
+            @foreach (var tip in Model.Tips)
+            {
+                <article class="nc-card tip">
+                    <div class="tip__head">
+                        <span class="nc-avatar nc-avatar--sm">@tip.AuthorInitials</span>
+                        <div style="flex:1;min-width:0">
+                            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                                <span class="tip__name">@tip.AuthorName</span>
+                                @if (tip.ApprovedByNutritionist)
+                                {
+                                    <span class="nc-badge nc-badge--teal nc-badge--dot">Nutri</span>
+                                }
+                            </div>
+                            <div class="tip__meta">@RelativeTime(tip.CreatedAt)</div>
+                        </div>
+                        @if (tip.Category.HasValue)
+                        {
+                            <span class="nc-badge nc-badge--neutral">@tip.Category.Value.GetDisplayName()</span>
+                        }
+                        @if (tip.CanDelete)
+                        {
+                            <form method="post" asp-controller="Tip" asp-action="Delete" asp-route-id="@tip.Id"
+                                  data-confirm="Tem certeza que deseja excluir esta dica? Esta ação não pode ser desfeita."
+                                  data-confirm-title="Excluir dica" data-confirm-ok="Excluir" data-confirm-danger="true" style="margin-left:var(--space-1)">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="tip__act" title="Excluir" style="color:var(--color-text-subtle)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
+                                </button>
+                            </form>
+                        }
+                    </div>
+
+                    <p class="tip__body">@tip.Body</p>
+
+                    <div class="tip-comments">
+                        @foreach (var c in tip.Comments)
+                        {
+                            <div class="tip-comment">
+                                <span class="nc-avatar nc-avatar--xs">@c.AuthorInitials</span>
+                                <div class="tip-comment__bubble">
+                                    <div class="tip-comment__head">
+                                        <span class="tip-comment__name">@c.AuthorName</span>
+                                        <span class="tip-comment__meta">@RelativeTime(c.CreatedAt)</span>
+                                    </div>
+                                    <p class="tip-comment__body">@c.Body</p>
+                                </div>
+                            </div>
+                        }
+
+                        @if (isAuth)
+                        {
+                            <form method="post" asp-controller="Tip" asp-action="Comment" class="tip-comment-form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="TipId" value="@tip.Id" />
+                                <input class="nc-input" name="Body" placeholder="Escreva um comentário…" maxlength="800" required />
+                                <button type="submit" class="nc-btn nc-btn--secondary nc-btn--sm">Comentar</button>
+                            </form>
+                        }
+                    </div>
+                </article>
+            }
+        </section>
+    }
+</main>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/tip-index.css" asp-append-version="true" />
+}

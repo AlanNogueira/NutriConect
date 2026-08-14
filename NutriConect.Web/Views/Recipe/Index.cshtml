@@ -1,0 +1,125 @@
+@model NutriConect.Business.ViewModels.RecipeListViewModel
+@using NutriConect.Business.Enums
+@using NutriConect.Business.Extensions
+@{
+    Layout = "_NcLayout";
+    ViewData["Title"] = "Receitas";
+    ViewData["ActiveNav"] = "receitas";
+    string FilterUrl(RecipeCategoryEnum? cat) =>
+        Url.Action("Index", "Recipe", new { category = cat?.ToString(), query = Model.Query })!;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/components/recipe-card.css" asp-append-version="true" />
+}
+
+<main class="page" style="max-width:1180px">
+    <header class="page-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap">
+        <div>
+            <h1>Receitas da comunidade</h1>
+            <p>Explore receitas saudáveis compartilhadas por nutricionistas e pela comunidade.</p>
+        </div>
+        <a class="nc-btn nc-btn--accent" asp-controller="Recipe" asp-action="Create">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+            Nova receita
+        </a>
+    </header>
+
+    <partial name="_SuccessAlert" model="@(TempData["Success"] as string)" />
+
+    <form method="get" asp-controller="Recipe" asp-action="Index" class="searchbar" style="display:flex;gap:var(--space-3);margin-bottom:var(--space-5)">
+        @if (Model.Category.HasValue)
+        {
+            <input type="hidden" name="category" value="@Model.Category.Value" />
+        }
+        <div class="nc-input-group" style="flex:1">
+            <span class="nc-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+            </span>
+            <input class="nc-input" name="query" value="@Model.Query" placeholder="Buscar por título ou descrição" />
+        </div>
+        <button type="submit" class="nc-btn nc-btn--secondary">Buscar</button>
+    </form>
+
+    <div style="display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-5)">
+        <a class="nc-chip @(Model.Category == null ? "nc-chip--active" : "")" href="@FilterUrl(null)" style="text-decoration:none">Todas</a>
+        @foreach (var cat in Enum.GetValues<RecipeCategoryEnum>())
+        {
+            <a class="nc-chip @(Model.Category == cat ? "nc-chip--active" : "")" href="@FilterUrl(cat)" style="text-decoration:none">@cat.GetDisplayName()</a>
+        }
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin:0 0 var(--space-5)">
+        <p class="muted" style="font-size:var(--text-sm);margin:0">
+            <b style="color:var(--color-text)">@Model.Total receita@(Model.Total == 1 ? "" : "s")</b> encontrada@(Model.Total == 1 ? "" : "s")
+        </p>
+        <form method="get" asp-controller="Recipe" asp-action="Index" id="sortForm" style="display:flex;align-items:center;gap:var(--space-2)">
+            @if (Model.Category.HasValue)
+            {
+                <input type="hidden" name="category" value="@Model.Category.Value" />
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Query))
+            {
+                <input type="hidden" name="query" value="@Model.Query" />
+            }
+            <label class="muted" for="sort" style="font-size:var(--text-sm)">Ordenar por</label>
+            <select class="nc-select" id="sort" onchange="document.getElementById('sortForm').submit()"
+                    asp-for="Sort" asp-items="Html.GetEnumSelectList<RecipeSortEnum>()"></select>
+        </form>
+    </div>
+
+    @if (Model.Total == 0)
+    {
+        <div class="nc-card" style="padding:var(--space-10);text-align:center;color:var(--color-text-muted)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;margin-bottom:var(--space-3);opacity:.4"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
+            <p style="margin:0;font-size:var(--text-md)">Nenhuma receita encontrada.</p>
+            <p style="margin:var(--space-2) 0 0;font-size:var(--text-sm)">
+                <a asp-controller="Recipe" asp-action="Create" style="color:var(--color-primary-soft-text)">Seja o primeiro a publicar</a> uma receita.
+            </p>
+        </div>
+    }
+    else
+    {
+        <section class="recipe-grid">
+            @foreach (var r in Model.Recipes)
+            {
+                <a class="nc-card nc-card--hover recipe-card" asp-controller="Recipe" asp-action="Details" asp-route-id="@r.Id">
+                    <div class="recipe-card__cover imgph">foto do prato</div>
+                    <div class="recipe-card__body">
+                        @if (r.ApprovedByNutritionist)
+                        {
+                            <span class="nc-badge nc-badge--success nc-badge--dot" style="align-self:flex-start">Aprovada por nutricionista</span>
+                        }
+                        <h3>@r.Title</h3>
+                        <div class="meta-row">
+                            @if (r.PrepMinutes.HasValue)
+                            {
+                                <span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 16 14" /></svg>
+                                    @r.PrepMinutes min
+                                </span>
+                            }
+                            @if (r.CaloriesPerServing.HasValue)
+                            {
+                                <span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 6 9 6 13a6 6 0 0 0 12 0c0-2-1-4-2-5-1 2-2 2.5-3 2.5C12 8 13 5 12 2z" /></svg>
+                                    @r.CaloriesPerServing kcal
+                                </span>
+                            }
+                        </div>
+                        @if (r.Categories.Any())
+                        {
+                            <div class="tag-row">
+                                @foreach (var cat in r.Categories)
+                                {
+                                    <span class="nc-badge nc-badge--neutral">@cat.GetDisplayName()</span>
+                                }
+                            </div>
+                        }
+                        <span class="subtle" style="font-size:var(--text-xs);margin-top:auto">por @r.AuthorName</span>
+                    </div>
+                </a>
+            }
+        </section>
+    }
+</main>

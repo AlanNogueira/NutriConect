@@ -1,0 +1,223 @@
+.segment {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--space-1);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-1);
+}
+
+.segment input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.segment label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 42px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.segment label svg {
+  width: 17px;
+  height: 17px;
+}
+
+.segment input:checked+label {
+  background: var(--color-surface);
+  color: var(--color-primary-soft-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.segment input:focus-visible+label {
+  box-shadow: var(--shadow-focus);
+}
+
+.chip-check {
+  position: relative;
+  cursor: pointer;
+}
+
+.chip-check input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.chip-check input:checked+.nc-chip {
+  background: var(--color-primary);
+  color: var(--color-on-solid);
+  border-color: var(--color-primary);
+}
+
+.chip-check input:focus-visible+.nc-chip {
+  box-shadow: var(--shadow-focus);
+}
+
+.editrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.editrow__num {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+  display: grid;
+  place-items: center;
+  font-weight: var(--weight-bold);
+  font-size: var(--text-sm);
+}
+
+.editrow__del {
+  flex: none;
+}
+
+.addrow {
+  align-self: flex-start;
+}
+
+.acct-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field-icon-btn {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-subtle);
+  display: grid;
+  place-items: center;
+  padding: var(--space-2);
+}
+
+.field-icon-btn:hover {
+  color: var(--color-text);
+}
+
+.field-icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pw-field {
+  position: relative;
+}
+
+.pw-field .nc-input {
+  padding-right: 46px;
+}
+
+.imgph {
+  background: repeating-linear-gradient(135deg, var(--color-primary-soft), var(--color-primary-soft) 11px, var(--color-surface-sunken) 11px, var(--color-surface-sunken) 22px);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-primary-soft-text);
+  text-align: center;
+}
+
+.imgph--upload {
+  border: 1.5px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.imgph--upload:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-soft-text);
+}
+
+.imgph--upload svg {
+  width: 28px;
+  height: 28px;
+}
+
+.token-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: 56px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.token-input:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.token-input input {
+  border: none;
+  outline: none;
+  background: none;
+  flex: 1;
+  min-width: 160px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  height: 36px;
+}
+
+.token {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-full);
+}
+
+.token button {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  opacity: .7;
+}
+
+.token button:hover {
+  opacity: 1;
+}
+
+.token button svg {
+  width: 13px;
+  height: 13px;
+}

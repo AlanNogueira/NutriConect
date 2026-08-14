@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="../NutriConect.Business/NutriConect.Business.csproj" />
+  <Project Path="../NutriConect.Data/NutriConect.Data.csproj" />
+  <Project Path="NutriConect.csproj" />
+</Solution>

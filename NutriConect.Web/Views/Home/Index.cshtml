@@ -1,0 +1,202 @@
+@{
+    ViewData["Title"] = "Nutrição personalizada para você";
+    Layout = "_NcPublicLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/components/appbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/home.css" asp-append-version="true" />
+}
+
+    <header class="appbar">
+        <div class="appbar__inner">
+            <a class="nc-brand" asp-controller="Home" asp-action="Index" style="text-decoration:none;">
+                <span class="nc-brand__mark">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                </span>
+                NutriConect
+            </a>
+
+            <nav class="appbar__links">
+                <a class="nc-navlink" href="#como-funciona">Como funciona</a>
+                <a class="nc-navlink" href="#para-profissionais">Para profissionais</a>
+            </nav>
+
+            <div class="appbar__right">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="usermenu"
+                                style="background:none;border:1px solid var(--color-border);cursor:pointer;padding:var(--space-1) var(--space-1) var(--space-1) var(--space-3);border-radius:var(--radius-full)">
+                            <span class="usermenu__name">@User.Identity.Name</span>
+                            <span class="nc-avatar nc-avatar--sm">
+                                @string.Concat((User.Identity.Name ?? "").Split(new[]{'@'}, 2)[0].ToUpper().Take(2))
+                            </span>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="nc-btn nc-btn--outline nc-btn--sm" asp-controller="Account" asp-action="Login">Entrar</a>
+                    <a class="nc-btn nc-btn--primary nc-btn--sm" asp-controller="Account" asp-action="Register">Começar
+                        grátis</a>
+                    }
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="page" style="padding-bottom: var(--space-4);">
+                <header class="hub-hero">
+                    <span class="eyebrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                        </svg>
+                        Plataforma de nutrição
+                    </span>
+                    <h1>Encontre seu<br>nutricionista ideal</h1>
+                    <p>Conectamos você a profissionais verificados para consultas online ou presenciais, receitas
+                        personalizadas e acompanhamento contínuo da sua saúde.</p>
+                        <div class="hero-cta">
+                            <a class="nc-btn nc-btn--primary nc-btn--lg" asp-controller="Account" asp-action="Register">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 12h14" />
+                                    <path d="m12 5 7 7-7 7" />
+                                </svg>
+                                Começar grátis
+                            </a>
+                            <a class="nc-btn nc-btn--outline nc-btn--lg" asp-controller="Nutritionist" asp-action="Public"
+                               asp-route-id="1">
+                                Ver profissionais
+                            </a>
+                        </div>
+                    </header>
+                </section>
+
+                <section class="features-section" id="para-profissionais">
+                    <h2>Tudo que você precisa em um só lugar</h2>
+                    <div class="hub-grid">
+
+                        <div class="nc-card nc-card--hover hubcard">
+                            <div class="hubcard__top hubcard__top--teal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                            </div>
+                            <div class="hubcard__body">
+                                <h3>Profissionais verificados</h3>
+                                <p>Todos os nutricionistas passam por verificação de CRN antes de aparecer na plataforma. Você
+                                    consulta com segurança.</p>
+                                    <div class="hubcard__rf">
+                                        <span class="nc-badge nc-badge--teal">CRN verificado</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="nc-card nc-card--hover hubcard">
+                                <div class="hubcard__top hubcard__top--success">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                    </svg>
+                                </div>
+                                <div class="hubcard__body">
+                                    <h3>Online e presencial</h3>
+                                    <p>Escolha a modalidade que funciona melhor para você — videoconferência no conforto de casa ou
+                                        consulta presencial no consultório.</p>
+                                        <div class="hubcard__rf">
+                                            <span class="nc-badge nc-badge--success">Online</span>
+                                            <span class="nc-badge nc-badge--success">Presencial</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="nc-card nc-card--hover hubcard">
+                                    <div class="hubcard__top hubcard__top--coral">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                                        </svg>
+                                    </div>
+                                    <div class="hubcard__body">
+                                        <h3>Receitas e comunidade</h3>
+                                        <p>Acesse receitas saudáveis, compartilhe dicas com a comunidade e receba orientações do seu
+                                            nutricionista num só lugar.</p>
+                                            <div class="hubcard__rf">
+                                                <span class="nc-badge nc-badge--coral">Receitas</span>
+                                                <span class="nc-badge nc-badge--coral">Dicas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </section>
+
+                            <section class="how-section" id="como-funciona" style="background: var(--color-surface-sunken);">
+                                <h2>Como funciona</h2>
+                                <p>Três passos para começar sua jornada de saúde.</p>
+                                <div class="lp-steps">
+                                    <div class="lp-step">
+                                        <div class="lp-step__num">1</div>
+                                        <h3>Crie sua conta</h3>
+                                        <p>Cadastre-se gratuitamente como cliente ou como profissional de nutrição. Leva menos de um minuto.
+                                        </p>
+                                    </div>
+                                    <div class="lp-step">
+                                        <div class="lp-step__num">2</div>
+                                        <h3>Encontre um profissional</h3>
+                                        <p>Filtre por especialidade, modalidade de atendimento e disponibilidade. Veja o perfil completo
+                                            antes de escolher.</p>
+                                        </div>
+                                        <div class="lp-step">
+                                            <div class="lp-step__num">3</div>
+                                            <h3>Comece sua jornada</h3>
+                                            <p>Agende sua consulta, receba orientações personalizadas e acompanhe sua evolução com receitas e
+                                                dicas da comunidade.</p>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section class="cta-section">
+                                        <h2>Pronto para cuidar<br>da sua alimentação?</h2>
+                                        <p>Junte-se a quem já descobriu o poder de uma nutrição personalizada e orientada por profissionais
+                                            verificados.</p>
+                                            <a class="nc-btn nc-btn--lg" asp-controller="Account" asp-action="Register"
+                                               style="background: var(--stone-0); color: var(--color-primary-soft-text);">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M5 12h14" />
+                                                    <path d="m12 5 7 7-7 7" />
+                                                </svg>
+                                                Criar conta gratuita
+                                            </a>
+                                        </section>
+                                    </main>
+
+                                    <footer>
+                                        <div class="lp-footer">
+                                            <a class="nc-brand" asp-controller="Home" asp-action="Index"
+                                               style="text-decoration:none; font-size: var(--text-sm);">
+                                                <span class="nc-brand__mark" style="width:26px;height:26px;border-radius:8px;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                                                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                                                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                                                    </svg>
+                                                </span>
+                                                NutriConect
+                                            </a>
+                                            <span>&copy; 2026 NutriConect. Todos os direitos reservados.</span>
+                                        </div>
+                                    </footer>

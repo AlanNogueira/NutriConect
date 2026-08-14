@@ -1,0 +1,136 @@
+@model NutriConect.Business.InputModels.RecipeInputModel
+@using NutriConect.Business.Enums
+@using NutriConect.Business.Extensions
+@{
+    var ingredients = Model.Ingredients.Count > 0 ? Model.Ingredients : new List<string> { "", "" };
+    var steps = Model.Steps.Count > 0 ? Model.Steps : new List<string> { "", "" };
+}
+
+<div asp-validation-summary="ModelOnly" class="nc-alert nc-alert--danger"
+     style="display:@(ViewData.ModelState.IsValid ? "none" : "flex");margin-bottom:var(--space-4)"></div>
+
+<section class="nc-card nc-card--pad">
+    <h2 class="section-title">Informações básicas</h2>
+    <div class="stack stack--sm">
+        <div class="imgph imgph--upload" style="height:160px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+            </svg>
+            <span>Upload de foto em breve</span>
+        </div>
+        <div class="nc-field">
+            <label class="nc-label" asp-for="Title">Título da receita <span class="nc-req">*</span></label>
+            <input class="nc-input" asp-for="Title" placeholder="Ex: Bowl proteico de frango" />
+            <span asp-validation-for="Title" class="nc-field__error"></span>
+        </div>
+        <div class="nc-field">
+            <label class="nc-label" asp-for="ShortDescription">Descrição curta</label>
+            <textarea class="nc-textarea" asp-for="ShortDescription"
+                      placeholder="Em uma frase, o que torna essa receita especial?"></textarea>
+            <span asp-validation-for="ShortDescription" class="nc-field__error"></span>
+        </div>
+    </div>
+</section>
+
+<section class="nc-card nc-card--pad">
+    <h2 class="section-title">Detalhes</h2>
+    <div class="row2">
+        <div class="nc-field">
+            <label class="nc-label" asp-for="PrepMinutes">Tempo de preparo (min)</label>
+            <input class="nc-input" asp-for="PrepMinutes" type="number" min="1" placeholder="15" />
+            <span asp-validation-for="PrepMinutes" class="nc-field__error"></span>
+        </div>
+        <div class="nc-field">
+            <label class="nc-label" asp-for="Servings">Porções</label>
+            <input class="nc-input" asp-for="Servings" type="number" min="1" placeholder="2" />
+            <span asp-validation-for="Servings" class="nc-field__error"></span>
+        </div>
+    </div>
+    <div class="row2" style="margin-top:var(--space-4)">
+        <div class="nc-field">
+            <label class="nc-label" asp-for="Difficulty">Dificuldade</label>
+            <select class="nc-select" asp-for="Difficulty"
+                    asp-items="Html.GetEnumSelectList<RecipeDifficultyEnum>()"></select>
+        </div>
+        <div class="nc-field">
+            <label class="nc-label" asp-for="CaloriesPerServing">Calorias (por porção)</label>
+            <input class="nc-input" asp-for="CaloriesPerServing" type="number" min="0" placeholder="480" />
+            <span asp-validation-for="CaloriesPerServing" class="nc-field__error"></span>
+        </div>
+    </div>
+    <div class="nc-field" style="margin-top:var(--space-4)">
+        <label class="nc-label">Categorias</label>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-2)">
+            @foreach (var cat in Enum.GetValues<RecipeCategoryEnum>())
+            {
+                <label class="chip-check">
+                    <input type="checkbox" name="Categories" value="@cat" checked="@Model.Categories.Contains(cat)" />
+                    <span class="nc-chip">@cat.GetDisplayName()</span>
+                </label>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="nc-card nc-card--pad">
+    <h2 class="section-title">Ingredientes</h2>
+    <div class="stack stack--sm" id="ing-list">
+        @for (var i = 0; i < ingredients.Count; i++)
+        {
+            <div class="editrow">
+                <span class="editrow__num">@(i + 1)</span>
+                <input class="nc-input" name="Ingredients" value="@ingredients[i]"
+                       placeholder="Ex: 300 g de peito de frango" />
+                <button type="button" class="nc-btn nc-btn--ghost nc-btn--icon editrow__del" aria-label="Remover"
+                        onclick="ncRemoveRow(this,'ing-list')">✕</button>
+            </div>
+        }
+    </div>
+    <button type="button" class="nc-btn nc-btn--outline nc-btn--sm addrow" style="margin-top:var(--space-4)"
+            onclick="ncAddRow('ing-list','Ingredients','ingrediente')">+ Adicionar ingrediente</button>
+</section>
+
+<section class="nc-card nc-card--pad">
+    <h2 class="section-title">Modo de preparo</h2>
+    <div class="stack stack--sm" id="step-list">
+        @for (var i = 0; i < steps.Count; i++)
+        {
+            <div class="editrow" style="align-items:flex-start">
+                <span class="editrow__num">@(i + 1)</span>
+                <textarea class="nc-textarea" name="Steps" style="min-height:72px"
+                          placeholder="Descreva este passo…">@steps[i]</textarea>
+                <button type="button" class="nc-btn nc-btn--ghost nc-btn--icon editrow__del" aria-label="Remover"
+                        onclick="ncRemoveRow(this,'step-list')">✕</button>
+            </div>
+        }
+    </div>
+    <button type="button" class="nc-btn nc-btn--outline nc-btn--sm addrow" style="margin-top:var(--space-4)"
+            onclick="ncAddRow('step-list','Steps','passo')">+ Adicionar passo</button>
+</section>
+
+<script>
+    function ncRenumber(id) {
+        document.querySelectorAll('#' + id + ' .editrow__num').forEach((n, i) => n.textContent = i + 1);
+    }
+    function ncRemoveRow(btn, id) {
+        const list = document.getElementById(id);
+        if (list.querySelectorAll('.editrow').length <= 1) return;
+        btn.closest('.editrow').remove();
+        ncRenumber(id);
+    }
+    function ncAddRow(id, name, kind) {
+        const list = document.getElementById(id);
+        const n = list.children.length + 1;
+        const row = document.createElement('div');
+        row.className = 'editrow';
+        const field = kind === 'passo'
+            ? `<textarea class="nc-textarea" name="${name}" style="min-height:72px" placeholder="Descreva este passo…"></textarea>`
+            : `<input class="nc-input" name="${name}" placeholder="Ex: 1 colher de azeite">`;
+        if (kind === 'passo') row.style.alignItems = 'flex-start';
+        row.innerHTML = `<span class="editrow__num">${n}</span>${field}<button type="button" class="nc-btn nc-btn--ghost nc-btn--icon editrow__del" aria-label="Remover" onclick="ncRemoveRow(this,'${id}')">✕</button>`;
+        list.appendChild(row);
+        row.querySelector('input,textarea').focus();
+    }
+</script>
